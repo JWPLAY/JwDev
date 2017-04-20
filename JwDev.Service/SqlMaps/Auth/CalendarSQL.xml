@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="SelectCalendar" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CAL_DATE  
+					,	AA.WEEK_NAME
+					,	AA.CAL_YEAR
+					,	AA.CAL_MONTH
+					,	AA.CAL_DAY
+					,	AA.QUARTER
+					,	AA.DAY_OF_WEEK
+					,	AA.DAY_OF_YEAR
+					,	AA.WEEK_OF_MONTH
+					,	AA.WEEK_OF_YEAR
+					,	AA.HOLIDAY_YN
+					,	AA.HOLIDAY_NAME
+					,	AA.REMARKS
+					,	AA.INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME			AS INS_USER_NAME
+					,	AA.UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME			AS UPD_USER_NAME
+				FROM	UAA.CALENDAR AA WITH (NOLOCK)
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK) ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN 
+							UAA.USERS U2 WITH (NOLOCK) ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+					AND	(
+							AA.REMARKS		LINE '%' + #FIND_TEXT# + '%'	OR
+							AA.CAL_DATE		LIKE #FIND_TEXT# + '%'
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="CAL_YEAR">
+				<![CDATA[
+					AND	AA.CAL_YEAR = #CAL_YEAR#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="CAL_DATE">
+				<![CDATA[
+					AND	AA.CAL_DATE	= #CAL_DATE#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.CAL_DATE ASC
+			]]>
+		</select>
+		<update id="UpdateCalendar" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE	UAA.CALENDAR
+				SET     HOLIDAY_YN	= #HOLIDAY_YN#
+					,	HOLIDAY_NAME= #HOLIDAY_NAME#
+					,	REMARKS		= #REMARKS#
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	CAL_DATE	= #CAL_DATE#
+			]]>
+		</update>
+		<procedure id="CreateCalendar" parameterMap="paramCreateCalendar" resultClass="Int">
+			spCreateCalendar
+		</procedure>		
+	</statements>
+	<parameterMaps>
+		<parameterMap id="paramCreateCalendar" class="DataMap">
+			<parameter property="CAL_YEAR" column="CAL_YEAR" />
+			<parameter property="INS_USER" column="INS_USER" />
+		</parameterMap>
+	</parameterMaps>
+</sqlMap>

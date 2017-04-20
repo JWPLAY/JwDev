@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="SelectBizRegCe" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  AA.BIZ_REG_ID
+					,	AA.BIZ_REG_NO
+					,	AA.BIZ_NAME
+					,	AA.REP_NAME
+					,	AA.BIZ_TYPE
+					,	AA.BIZ_ITEM
+					,	AA.REMARKS
+					,	AA.USE_YN
+					,	AA.INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME			AS INS_USER_NAME
+					,	AA.UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME			AS UPD_USER_NAME
+					
+					,	AA.ADDRESS_ID
+					,	AD.POST_NO
+					,	AD.ZONE_NO
+					,	AD.ADDRESS1
+					,	AD.ADDRESS2
+					
+				FROM	UCD.BIZ_REG_CE AA WITH (NOLOCK)
+						LEFT JOIN
+							UCD.ADDRESS AD WITH (NOLOCK)
+								ON AA.ADDRESS_ID = AD.ADDRESS_ID
+						LEFT JOIN
+							UAA.USERS U1 
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1				
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+					AND	(
+							AA.BIZ_REG_NO	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.BIZ_NAME		LIKE '%' + #FIND_TEXT# + '%'
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="BIZ_REG_ID">
+				<![CDATA[
+					AND	AA.BIZ_REG_ID = #BIZ_REG_ID#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.BIZ_NAME
+			]]>
+		</select>
+		<insert id="InsertBizRegCe" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UCD.BIZ_REG_CE
+				( 
+					BIZ_REG_NO, BIZ_NAME, REP_NAME, BIZ_TYPE, BIZ_ITEM, REMARKS, USE_YN, INS_TIME, INS_USER
+				)
+				VALUES
+				( 
+					#BIZ_REG_NO#, #BIZ_NAME#, #REP_NAME#, #BIZ_TYPE#, #BIZ_ITEM#, #REMARKS#, #USE_YN#, GETDATE(), #INS_USER#
+				)
+			]]>
+			<selectKey type="post" property="BIZ_REG_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS BIZ_REG_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateBizRegCe" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE	UCD.BIZ_REG_CE
+				SET     BIZ_NAME	= #BIZ_NAME#
+					,	BIZ_REG_NO	= #BIZ_REG_NO#
+					,	REP_NAME	= #REP_NAME#
+					,	BIZ_TYPE	= #BIZ_TYPE#
+					,	BIZ_ITEM	= #BIZ_ITEM#
+					,	REMARKS		= #REMARKS#
+					,	USE_YN		= #USE_YN#
+					,	ADDRESS_ID	= #ADDRESS_ID#
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	BIZ_REG_ID	= #BIZ_REG_ID#
+			]]>
+		</update>
+		<delete id="DeleteBizRegCe" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UCD.BIZ_REG_CE
+				WHERE	BIZ_REG_ID = #BIZ_REG_ID#
+			]]>
+		</delete>
+
+		<select id="GetBizRegId" parameterClass="DataMap" resultClass="Int">
+			<![CDATA[
+				SELECT	BIZ_REG_ID
+				FROM	UCD.BIZ_REG_CE WITH (NOLOCK)
+				WHERE	BIZ_REG_ID	= #BIZ_REG_ID#
+			]]>
+		</select>
+		<select id="GetBizRegIdByRegNo" parameterClass="DataMap" resultClass="Int">
+			<![CDATA[
+				SELECT	BIZ_REG_ID
+				FROM	UCD.BIZ_REG_CE WITH (NOLOCK)
+				WHERE	BIZ_REG_NO	= #BIZ_REG_NO#
+			]]>
+		</select>
+	</statements>
+</sqlMap>

@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="SelectCustomers" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.USE_YN DESC, AA.CUSTOMER_NAME)	AS ROW_NO
+					,	AA.CUSTOMER_ID
+					,	AA.CUSTOMER_NAME
+					,	M1.NAME				AS CUSTOMER_TYPE
+					,	AA.USE_YN
+				FROM	UCD.CUSTOMERS AA WITH (NOLOCK)
+						LEFT JOIN 
+							UAA.CODES M1 WITH (NOLOCK)
+								ON AA.CUSTOMER_TYPE = M1.CODE 
+									AND M1.PARENT_CODE = 'CUSTOMER_TYPE'
+				WHERE	1=1				
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+					AND	AA.CUSTOMER_NAME LIKE '%' + #FIND_TEXT# + '%'
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<select id="SelectCustomer" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  AA.CUSTOMER_ID
+					,	AA.CUSTOMER_NAME
+					,	AA.CUSTOMER_TYPE
+					,	AA.EMAIL
+					,	AA.HPAGE
+					,	AA.USE_YN
+					,	AA.REMARKS
+					
+					,	AA.INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME			AS INS_USER_NAME
+					,	AA.UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME			AS UPD_USER_NAME
+					
+					,	AA.BIZ_REG_ID
+					,	BZ.BIZ_REG_NO
+					,	BZ.BIZ_NAME
+					,	BZ.REP_NAME
+					,	BZ.BIZ_TYPE
+					,	BZ.BIZ_ITEM	
+					
+					,	BZ.ADDRESS_ID
+					,	AD.POST_NO
+					,	AD.ZONE_NO
+					,	AD.ADDRESS1		
+					,	AD.ADDRESS2
+					
+				FROM	UCD.CUSTOMERS AA WITH (NOLOCK)
+						LEFT JOIN
+							UCD.BIZ_REG_CE BZ WITH (NOLOCK) 
+								ON AA.BIZ_REG_ID = BZ.BIZ_REG_ID
+						LEFT JOIN
+							UCD.ADDRESS AD WITH (NOLOCK)
+								ON BZ.ADDRESS_ID = AD.ADDRESS_ID
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK)
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 WITH (NOLOCK)
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1				
+			]]>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+					AND	AA.CUSTOMER_ID = #CUSTOMER_ID#
+				]]>
+			</isNotEmpty>
+		</select>
+		<insert id="InsertCustomer" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UCD.CUSTOMERS
+				( 
+					CUSTOMER_NAME, CUSTOMER_TYPE, EMAIL, HPAGE, USE_YN, REMARKS, BIZ_REG_ID, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#CUSTOMER_NAME#, #CUSTOMER_TYPE#, #EMAIL#, #HPAGE#, #USE_YN#, #REMARKS#, #BIZ_REG_ID#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="CUSTOMER_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS CUSTOMER_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateCustomer" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UCD.CUSTOMERS
+				SET     CUSTOMER_NAME	= #CUSTOMER_NAME#
+					,	CUSTOMER_TYPE	= #CUSTOMER_TYPE#
+					,	EMAIL			= #EMAIL#
+					,	HPAGE			= #HPAGE#
+					,	USE_YN			= #USE_YN#
+					,	REMARKS			= #REMARKS#
+					,	BIZ_REG_ID		= #BIZ_REG_ID#
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				WHERE	CUSTOMER_ID		= #CUSTOMER_ID#
+			]]>
+		</update>
+		<delete id="DeleteCustomer" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UCD.CUSTOMERS
+				WHERE	CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+		</delete>
+	</statements>
+</sqlMap>

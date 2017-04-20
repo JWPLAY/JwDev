@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="GetProfitList" parameterClass="DataMap" resultClass="ProfitList" >
+			<![CDATA[
+				SELECT	ROW_NUMBER() OVER (ORDER BY		
+												ISNULL(M1.SORT_SEQ, 99999), PP.PRODUCT_TYPE,
+												ISNULL(M2.SORT_SEQ, 99999), PP.CATEGORY,
+												PP.PRODUCT_NAME, PP.PRODUCT_CODE)	AS ROW_NO
+					,	ISNULL(M1.NAME, PP.PRODUCT_TYPE)	AS PRODUCT_TYPE
+					,	ISNULL(M2.NAME, PP.CATEGORY)		AS CATEGORY
+					,	AA.PRODUCT_ID						AS PRODUCT_ID
+					,	PP.PRODUCT_CODE						AS PRODUCT_CODE
+					,	PP.PRODUCT_NAME						AS PRODUCT_NAME
+					,	M3.NAME								AS PRODUCT_UNIT
+					,	AA.SALE_AMT
+					,	AA.BASE_AMT
+					,	AA.PURC_AMT
+					,	AA.PROD_AMT
+					,	AA.ADJS_AMT
+					,	AA.BLNC_AMT
+					,	AA.COST_AMT
+					,	AA.SALE_AMT - AA.COST_AMT	AS PRFT_AMT
+					,	CASE
+							WHEN AA.SALE_AMT = 0 THEN 0
+							ELSE (AA.SALE_AMT - AA.COST_AMT)/AA.SALE_AMT
+						END							AS PRFT_RAT
+					,	AA.COST_PRICE
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+				FROM	UBZ.INVENTORY_MON AA WITH (NOLOCK)
+						INNER JOIN
+							UCD.PRODUCTS PP WITH (NOLOCK)
+								ON AA.PRODUCT_ID = PP.PRODUCT_ID
+						LEFT JOIN
+							UAA.CODES M1
+								ON PP.PRODUCT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'PRODUCT_TYPE'
+						LEFT JOIN
+							UAA.CODES M2 
+								ON PP.CATEGORY = M2.CODE
+									AND M2.PARENT_CODE = 'CATEGORY'
+						LEFT JOIN
+							UAA.CODES M3
+								ON PP.UNIT_TYPE = M3.CODE
+									AND M3.PARENT_CODE = 'UNIT_TYPE'
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK) 
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN 
+							UAA.USERS U2 WITH (NOLOCK) 
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.CLOSING_YM = #CLOSING_YM#
+				AND		PP.PRODUCT_TYPE NOT IN ('M')
+			]]>
+			<isNotEmpty property="PRODUCT_TYPE">
+				<![CDATA[
+					AND	PP.PRODUCT_TYPE = #PRODUCT_TYPE#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="CATEGORY">
+				<![CDATA[
+					AND	PP.CATEGORY	= #CATEGORY#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="PRODUCT_ID">
+				<![CDATA[
+					AND	AA.PRODUCT_ID	= #PRODUCT_ID#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+	</statements>
+</sqlMap>

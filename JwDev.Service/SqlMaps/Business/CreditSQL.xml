@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="GetDepositList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.DEPOSIT_ID)	AS ROW_NO
+					,	AA.DEPOSIT_ID
+					,	dbo.DateCharToChar10(AA.DEPOSIT_DATE)		AS DEPOSIT_DATE
+					,	AA.CUSTOMER_ID
+					,	CC.CUSTOMER_NAME
+					,	AA.DEPOSIT_AMT
+					,	AA.REMARKS
+					,	dbo.DateTimeToChar20(AA.INS_TIME)		AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME							AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)		AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME							AS UPD_USER_NAME
+				FROM	UBZ.DEPOSIT AA
+						LEFT JOIN
+							UCD.CUSTOMERS CC
+								ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+						LEFT JOIN
+							UAA.USERS U1
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1				
+			]]>
+			<isNotEmpty property="ST_DEPOSIT_DATE">
+			<![CDATA[
+				AND		AA.DEPOSIT_DATE >= #ST_DEPOSIT_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="ED_DEPOSIT_DATE">
+				<![CDATA[
+				AND		AA.DEPOSIT_DATE <= #ED_DEPOSIT_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+				AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<select id="GetDepositData" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  AA.DEPOSIT_ID
+					,	AA.DEPOSIT_DATE
+					,	AA.CUSTOMER_ID
+					,	CC.CUSTOMER_NAME
+					,	AA.DEPOSIT_AMT
+					,	AA.REMARKS
+					,	dbo.DateTimeToChar20(AA.INS_TIME)		AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME							AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)		AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME							AS UPD_USER_NAME
+				FROM	UBZ.DEPOSIT AA
+						LEFT JOIN
+							UCD.CUSTOMERS CC
+								ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+						LEFT JOIN
+							UAA.USERS U1
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.DEPOSIT_ID = #DEPOSIT_ID#
+			]]>
+		</select>
+		<insert id="InsertDeposit" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UBZ.DEPOSIT
+				( 
+					DEPOSIT_DATE, CUSTOMER_ID, DEPOSIT_AMT, REMARKS, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#DEPOSIT_DATE#, #CUSTOMER_ID#, #DEPOSIT_AMT#, #REMARKS#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="DEPOSIT_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS DEPOSIT_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateDeposit" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UBZ.DEPOSIT
+				SET     DEPOSIT_DATE	= #DEPOSIT_DATE#
+					,	CUSTOMER_ID		= #CUSTOMER_ID#
+					,	DEPOSIT_AMT		= #DEPOSIT_AMT#
+					,	REMARKS			= #REMARKS#
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				WHERE	DEPOSIT_ID		= #DEPOSIT_ID#
+			]]>
+		</update>
+		<delete id="DeleteDeposit" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UBZ.DEPOSIT
+				WHERE	DEPOSIT_ID = #DEPOSIT_ID#
+			]]>
+		</delete>
+
+		<select id="GetCreditList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CUSTOMER_ID
+					,	CC.CUSTOMER_NAME
+					,	SUM(AA.BASE_AMT)		AS BASE_AMT
+					,	SUM(AA.SALE_AMT)		AS SALE_AMT
+					,	SUM(AA.DPST_AMT)		AS DPST_AMT
+					,	SUM(AA.BASE_AMT) +
+						SUM(AA.SALE_AMT) -
+						SUM(AA.DPST_AMT)		AS BLNC_AMT
+				FROM	(
+							SELECT	AA.CUSTOMER_ID
+								,	SUM(CASE WHEN AA.SALE_DATE < #ST_SALE_DATE# THEN AA.TOT_NPAY_AMT ELSE 0 END)	AS BASE_AMT
+								,	SUM(CASE WHEN AA.SALE_DATE < #ST_SALE_DATE# THEN 0 ELSE AA.TOT_NPAY_AMT END)	AS SALE_AMT
+								,	0						AS DPST_AMT
+							FROM	UBZ.SALE_TRAN AA
+							WHERE	AA.SALE_DATE <= #ED_SALE_DATE#
+							AND		AA.PAY_TYPE	= '30'
+			]]>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+							AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+			</isNotEmpty>
+			<![CDATA[
+							GROUP BY AA.CUSTOMER_ID
+							UNION ALL
+							SELECT	AA.CUSTOMER_ID
+								,	SUM(CASE WHEN AA.DEPOSIT_DATE < #ST_SALE_DATE# THEN AA.DEPOSIT_AMT ELSE 0 END) * (-1)	AS BASE_AMT
+								,	0																						AS SALE_AMT
+								,	SUM(CASE WHEN AA.DEPOSIT_DATE < #ST_SALE_DATE# THEN 0 ELSE AA.DEPOSIT_AMT END)			AS DPST_AMT
+							FROM	UBZ.DEPOSIT AA
+							WHERE	AA.DEPOSIT_DATE <= #ED_SALE_DATE#
+			]]>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+							AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+			</isNotEmpty>
+			<![CDATA[
+							GROUP BY AA.CUSTOMER_ID
+						) AA
+						LEFT JOIN
+							UCD.CUSTOMERS CC ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+				GROUP BY AA.CUSTOMER_ID, CC.CUSTOMER_NAME
+				ORDER BY CC.CUSTOMER_NAME
+			]]>
+		</select>
+
+		<select id="GetSalesLedgerList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				;WITH Requests AS
+				(
+					SELECT	1							AS LIST_ID
+						,	0							AS TRAN_ID
+						,	CONVERT(VARCHAR(8), DATEADD(DAY, -1, CONVERT(DATETIME, #ST_SALE_DATE#, 112)), 112)	AS TRAN_DATE
+						,	'전일이월'					AS ITEM_NAME
+						,	ISNULL(SUM(AA.BASE_AMT), 0)	AS BASE_AMT
+						,	0							AS SALE_AMT
+						,	0							AS DPST_AMT
+						,	NULL						AS INS_TIME
+						,	NULL						AS INS_USER
+						,	NULL						AS UPD_TIME
+						,	NULL						AS UPD_USER
+					FROM	(
+								SELECT	SUM(AA.TOT_NPAY_AMT)	AS BASE_AMT
+								FROM	UBZ.SALE_TRAN AA
+								WHERE	AA.SALE_DATE   < #ST_SALE_DATE#
+								AND		AA.PAY_TYPE	   = '30'
+								AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+								UNION ALL
+								SELECT	SUM(AA.DEPOSIT_AMT)		AS BASE_AMT
+								FROM	UBZ.DEPOSIT AA
+								WHERE	AA.DEPOSIT_DATE < #ST_SALE_DATE#
+								AND		AA.CUSTOMER_ID  = #CUSTOMER_ID#
+							) AA
+					UNION ALL
+					SELECT	2						AS LIST_ID
+						,	AA.SALE_ID				AS TRAN_ID
+						,	AA.SALE_DATE			AS TRAN_DATE
+						,	PP.PRODUCT_NAME			AS ITEM_NAME
+						,	0						AS BASE_AMT
+						,	BB.NPAY_AMT				AS SALE_AMT
+						,	0						AS DPST_AMT
+						,	BB.INS_TIME
+						,	BB.INS_USER
+						,	BB.UPD_TIME
+						,	BB.UPD_USER
+					FROM	UBZ.SALE_TRAN AA
+							INNER JOIN
+								UBZ.SALE_TRAN_ITEM BB 
+									ON AA.SALE_ID = BB.SALE_ID
+							LEFT JOIN
+								UCD.PRODUCTS PP
+									ON BB.PRODUCT_ID = PP.PRODUCT_ID
+					WHERE	AA.SALE_DATE  >= #ST_SALE_DATE#
+					AND		AA.SALE_DATE  <= #ED_SALE_DATE#
+					AND		AA.PAY_TYPE	   = '30'
+					AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+					UNION ALL
+					SELECT	3						AS LIST_ID
+						,	AA.DEPOSIT_ID			AS TRAN_ID
+						,	AA.DEPOSIT_DATE			AS TRAN_DATE
+						,	'입금'					AS ITEM_NAME
+						,	0						AS BASE_AMT
+						,	0						AS SALE_AMT
+						,	AA.DEPOSIT_AMT			AS DPST_AMT
+						,	AA.INS_TIME
+						,	AA.INS_USER
+						,	AA.UPD_TIME
+						,	AA.UPD_USER
+					FROM	UBZ.DEPOSIT AA
+					WHERE	AA.DEPOSIT_DATE >= #ST_SALE_DATE#
+					AND		AA.DEPOSIT_DATE <= #ED_SALE_DATE#
+					AND		AA.CUSTOMER_ID   = #CUSTOMER_ID#
+				)
+				SELECT	AA.TRAN_ID							AS TRAN_ID
+					,	dbo.DateCharToChar10(AA.TRAN_DATE)	AS TRAN_DATE
+					,	AA.ITEM_NAME						AS ITEM_NAME
+					,	AA.BASE_AMT							AS BASE_AMT
+					,	AA.SALE_AMT							AS SALE_AMT
+					,	AA.DPST_AMT							AS DPST_AMT
+					,	ISNULL((	SELECT	SUM(BB.BASE_AMT) +
+											SUM(BB.SALE_AMT) -
+											SUM(BB.DPST_AMT)
+									FROM	Requests BB
+									WHERE	BB.TRAN_DATE <= AA.TRAN_DATE),0)	AS BLNC_AMT
+				FROM	Requests AA
+				ORDER BY AA.TRAN_DATE, AA.LIST_ID, AA.TRAN_ID 
+			]]>
+		</select>
+	</statements>
+</sqlMap>

@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="GetPurcTran" parameterClass="DataMap" resultClass="PurcTran" >
+			<![CDATA[
+				SELECT  AA.PURC_ID
+					,	AA.PURC_NO
+					,	AA.PURC_DATE
+					,	AA.PURC_TYPE
+					,	AA.CUSTOMER_ID
+					,	BB.CUSTOMER_NAME
+					,	AA.REMARKS
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+				FROM	UBZ.PURC_TRAN AA WITH (NOLOCK)
+						LEFT JOIN
+							UCD.CUSTOMERS BB
+								ON AA.CUSTOMER_ID = BB.CUSTOMER_ID
+						LEFT JOIN 
+							UAA.USERS U1
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.PURC_ID	= #PURC_ID#
+			]]>
+		</select>
+		<select id="GetPurcTranItem" parameterClass="DataMap" resultClass="PurcTranItem" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.ITEM_ID)	AS ROW_NO
+					,	AA.ITEM_ID
+					,	AA.PURC_ID
+					,	AA.PRODUCT_ID
+					,	BB.PRODUCT_NAME
+					,	BB.PRODUCT_CODE
+					,	ISNULL(M1.NAME, BB.UNIT_TYPE)	AS PRODUCT_UNIT
+					
+					,	AA.PURC_PRICE
+					,	AA.PURC_QTY
+					,	AA.PURC_AMT
+					
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+					
+				FROM	UBZ.PURC_TRAN_ITEM AA
+						LEFT JOIN
+							UCD.PRODUCTS BB
+								ON AA.PRODUCT_ID = BB.PRODUCT_ID
+						LEFT JOIN
+							UAA.CODES M1
+								ON BB.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK)
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 WITH (NOLOCK)
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.PURC_ID	= #PURC_ID#
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		
+		<insert id="InsertPurcTran" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UBZ.PURC_TRAN
+				( 
+					PURC_NO, PURC_DATE, PURC_TYPE, CUSTOMER_ID,
+					REMARKS, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#PURC_NO#, #PURC_DATE#, #PURC_TYPE#, #CUSTOMER_ID#,
+					#REMARKS#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="PURC_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS PURC_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdatePurcTran" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UBZ.PURC_TRAN
+				SET     PURC_DATE		= #PURC_DATE#
+					,	PURC_TYPE		= #PURC_TYPE#
+					,	CUSTOMER_ID		= #CUSTOMER_ID#
+					,	REMARKS			= #REMARKS#
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				WHERE	PURC_ID			= #PURC_ID#
+			]]>
+		</update>
+		<delete id="DeletePurcTran" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UBZ.PURC_TRAN
+				WHERE	PURC_ID = #PURC_ID#;
+				DELETE
+				FROM	UBZ.PURC_TRAN_ITEM
+				WHERE	PURC_ID	= #PURC_ID#
+			]]>
+		</delete>
+
+		<select id="GetPurcNo" parameterClass="DataMap" resultClass="String" >
+			<![CDATA[
+				SELECT  ISNULL(MAX(PURC_NO), #PURC_NO#+'000')	AS PURC_NO
+				FROM	UBZ.PURC_TRAN AA WITH (NOLOCK)
+				WHERE	AA.PURC_NO LIKE #PURC_NO# + '%'
+				]]>
+		</select>
+
+		<select id="GetPurcIdByPurcNo" parameterClass="DataMap" resultClass="Int" >
+			<![CDATA[
+				SELECT  AA.PURC_ID
+				FROM	UBZ.PURC_TRAN AA
+				WHERE	AA.PURC_NO = #PURC_NO#
+				]]>
+		</select>
+
+		<insert id="InsertPurcTranItem" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UBZ.PURC_TRAN_ITEM
+				( 
+					PURC_ID, PRODUCT_ID, PURC_PRICE, PURC_QTY, PURC_AMT, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#PURC_ID#, #PRODUCT_ID#, #PURC_PRICE#, #PURC_QTY#, #PURC_AMT#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="ITEM_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS ITEM_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdatePurcTranItem" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UBZ.PURC_TRAN
+				SET     PRODUCT_ID		= #PRODUCT_ID#
+					,	PURC_PRICE		= #PURC_PRICE#
+					,	PURC_QTY		= #PURC_QTY#
+					,	PURC_AMT		= #PURC_AMT#
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				WHERE	ITEM_ID			= #ITEM_ID#
+			]]>
+		</update>
+		<delete id="DeletePurcTranItem" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UBZ.PURC_TRAN_ITEM
+				WHERE	ITEM_ID = #ITEM_ID#
+			]]>
+		</delete>
+
+		<select id="GetPurcRequests" parameterClass="DataMap" resultClass="PurcRequests" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.PURC_DATE DESC, AA.PURC_ID, BB.ITEM_ID)		AS ROW_NO
+					,	AA.PURC_ID
+					,	AA.PURC_NO
+					,	dbo.DateCharToChar10(AA.PURC_DATE)	AS PURC_DATE
+					,	ISNULL(M3.NAME, AA.PURC_TYPE)		AS PURC_TYPE
+					,	AA.CUSTOMER_ID
+					,	CC.CUSTOMER_NAME
+					,	AA.REMARKS
+					,	ROW_NUMBER() OVER (PARTITION BY BB.PURC_ID ORDER BY BB.ITEM_ID)	AS ITEM_NO
+					,	BB.ITEM_ID
+					,	BB.PRODUCT_ID
+					,	PP.PRODUCT_CODE
+					,	PP.PRODUCT_NAME
+					,	BB.PURC_PRICE
+					,	BB.PURC_QTY
+					,	BB.PURC_AMT
+					,	ISNULL(M1.NAME, PP.PRODUCT_TYPE)	AS PRODUCT_TYPE
+					,	ISNULL(M2.NAME, PP.CATEGORY)		AS CATEGORY
+					,	dbo.DateTimeToChar20(BB.INS_TIME)	AS INS_TIME
+					,	BB.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(BB.UPD_TIME)	AS UPD_TIME
+					,	BB.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+				FROM	UBZ.PURC_TRAN AA WITH (NOLOCK)
+						INNER JOIN
+							UBZ.PURC_TRAN_ITEM BB
+								ON AA.PURC_ID = BB.PURC_ID
+						INNER JOIN
+							UCD.CUSTOMERS CC 
+								ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+						INNER JOIN
+							UCD.PRODUCTS PP
+								ON BB.PRODUCT_ID = PP.PRODUCT_ID
+						LEFT JOIN 
+							UAA.CODES M1 WITH (NOLOCK)
+								ON PP.PRODUCT_TYPE = M1.CODE 
+									AND M1.PARENT_CODE = 'PRODUCT_TYPE'
+						LEFT JOIN
+							UAA.CODES M2 WITH (NOLOCK)
+								ON PP.CATEGORY = M2.CODE
+									AND M2.PARENT_CODE = 'CATEGORY'
+						LEFT JOIN
+							UAA.CODES M3 WITH (NOLOCK)
+								ON AA.PURC_TYPE = M3.CODE
+									AND M3.PARENT_CODE = 'PURC_TYPE'
+						LEFT JOIN
+							UAA.USERS U1 
+								ON BB.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 
+								ON BB.UPD_USER = U2.USER_ID
+				WHERE	1=1				
+			]]>
+			<isNotEmpty property="ST_PURC_DATE">
+				<![CDATA[
+				AND		AA.PURC_DATE	>= #ST_PURC_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="ED_PURC_DATE">
+				<![CDATA[
+				AND		AA.PURC_DATE	<= #ED_PURC_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+				AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="PRODUCT_ID">
+				<![CDATA[
+				AND		BB.PRODUCT_ID = #PRODUCT_ID#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="PRODUCT_TYPE">
+				<![CDATA[
+				AND		PP.PRODUCT_TYPE = #PRODUCT_TYPE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="CATEGORY">
+				<![CDATA[
+				AND		PP.CATEGORY = #CATEGORY#
+			]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+	</statements>
+</sqlMap>

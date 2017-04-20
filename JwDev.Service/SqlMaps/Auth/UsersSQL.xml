@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="SelectUsers" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.USER_ID DESC)	AS ROW_NO
+					,	AA.USER_ID
+					,	AA.USER_NAME
+					,	AA.USER_TYPE
+					,	AA.LOGIN_ID
+					,	AA.USE_YN
+					,	AA.REMARKS
+					,	AA.INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME			AS INS_USER_NAME
+					,	AA.UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME			AS UPD_USER_NAME
+				FROM	UAA.USERS AA WITH (NOLOCK)
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK) 
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN 
+							UAA.USERS U2 WITH (NOLOCK) 
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+					AND	AA.NAME LIKE '%' + #FIND_TEXT# + '%'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USER_ID">
+				<![CDATA[
+					AND	AA.USER_ID = #USER_ID#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<insert id="InsertUser" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UAA.USERS
+				( 
+					USER_NAME, USER_TYPE, LOGIN_ID, LOGIN_PW, USE_YN, REMARKS, INS_TIME, INS_USER
+				)
+				VALUES
+				( 
+					#USER_NAME#
+				,	#USER_TYPE#
+				,	#LOGIN_ID#
+				,	PWDENCRYPT(#LOGIN_ID#)
+				,	#USE_YN#
+				,	#REMARKS#
+				,	GETDATE()
+				,	#INS_USER#
+				)
+			]]>
+			<selectKey type="post" property="USER_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS USER_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateUser" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UAA.USERS
+				SET     USER_NAME	= #USER_NAME#
+					,	USER_TYPE	= #USER_TYPE#
+					,	LOGIN_ID	= #LOGIN_ID#
+					,	USE_YN		= #USE_YN#
+					,	REMARKS		= #REMARKS#
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	USER_ID		= #USER_ID#
+			]]>
+		</update>
+		<delete id="DeleteUser" parameterClass="DataMap">
+			<![CDATA[
+				DELETE 
+				FROM	UAA.USERS
+				WHERE	USER_ID = #USER_ID#
+			]]>
+		</delete>
+		<update id="ClearPassword" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UAA.USERS
+				SET     LOGIN_PW	= PWDENCRYPT(LOGIN_ID)
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	USER_ID		= #USER_ID#
+			]]>
+		</update>
+		<update id="ChangePassword" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UAA.USERS
+				SET     LOGIN_PW	= PWDENCRYPT(#LOGIN_PW#)
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	USER_ID		= #USER_ID#
+			]]>
+		</update>
+	</statements>
+</sqlMap>

@@ -1,0 +1,483 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="GetSaleTran" parameterClass="DataMap" resultClass="SaleTran" >
+			<![CDATA[
+				SELECT  AA.SALE_ID
+					,	AA.SALE_NO
+					,	AA.SALE_DATE
+					,	AA.SALE_TYPE
+					,	AA.PAY_TYPE
+					,	AA.CUSTOMER_ID
+					,	BB.CUSTOMER_NAME
+					,	AA.REMARKS
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+				FROM	UBZ.SALE_TRAN AA WITH (NOLOCK)
+						LEFT JOIN
+							UCD.CUSTOMERS BB
+								ON AA.CUSTOMER_ID = BB.CUSTOMER_ID
+						LEFT JOIN 
+							UAA.USERS U1
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.SALE_ID	= #SALE_ID#
+			]]>
+		</select>
+		<select id="GetSaleTranItem" parameterClass="DataMap" resultClass="SaleTranItem" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.ITEM_ID)	AS ROW_NO
+					,	AA.ITEM_ID
+					,	AA.SALE_ID
+					,	AA.PRODUCT_ID
+					,	BB.PRODUCT_CODE
+					,	BB.PRODUCT_NAME
+					,	AA.SALE_PRICE
+					,	AA.DISC_RATE
+					,	AA.DISC_PRICE
+					,	AA.SALE_QTY
+					,	AA.SALE_AMT
+					,	AA.DISC_AMT
+					,	AA.NPAY_AMT
+					,	AA.DISC_TYPE
+					
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+					
+				FROM	UBZ.SALE_TRAN_ITEM AA
+						LEFT JOIN
+							UCD.PRODUCTS BB
+								ON AA.PRODUCT_ID = BB.PRODUCT_ID
+						LEFT JOIN 
+							UAA.USERS U1 WITH (NOLOCK)
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2 WITH (NOLOCK)
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	AA.SALE_ID	= #SALE_ID#
+				ORDER BY AA.ITEM_ID
+			]]>
+		</select>
+		
+		<insert id="InsertSaleTran" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UBZ.SALE_TRAN
+				( 
+					SALE_NO, SALE_DATE, SALE_TYPE, CUSTOMER_ID, PAY_TYPE,
+					TOT_SALE_QTY, TOT_SALE_AMT, TOT_DISC_AMT, TOT_NPAY_AMT,
+					REMARKS, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#SALE_NO#, #SALE_DATE#, #SALE_TYPE#, #CUSTOMER_ID#, #PAY_TYPE#,
+					0, 0, 0, 0,
+					#REMARKS#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="SALE_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS SALE_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateSaleTran" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UBZ.SALE_TRAN
+				SET     SALE_DATE		= #SALE_DATE#
+					,	SALE_TYPE		= #SALE_TYPE#
+					,	CUSTOMER_ID		= #CUSTOMER_ID#
+					,	PAY_TYPE		= #PAY_TYPE#
+					,	REMARKS			= #REMARKS#
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				WHERE	SALE_ID			= #SALE_ID#
+			]]>
+		</update>
+		<update id="UpdateSaleTranSum" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  AA
+				SET     TOT_SALE_QTY	= ISNULL(BB.SALE_QTY, 0)
+					,	TOT_SALE_AMT	= ISNULL(BB.SALE_AMT, 0)
+					,	TOT_DISC_AMT	= ISNULL(BB.DISC_AMT, 0)
+					,	TOT_NPAY_AMT	= ISNULL(BB.NPAY_AMT, 0)
+					,	UPD_TIME		= GETDATE()
+					,	UPD_USER		= #INS_USER#
+				FROM	UBZ.SALE_TRAN AA
+						LEFT JOIN
+						(
+							SELECT	SALE_ID
+								,	SUM(SALE_QTY)	AS SALE_QTY
+								,	SUM(SALE_AMT)	AS SALE_AMT
+								,	SUM(DISC_AMT)	AS DISC_AMT
+								,	SUM(NPAY_AMT)	AS NPAY_AMT
+							FROM	UBZ.SALE_TRAN_ITEM 
+							WHERE	SALE_ID = #SALE_ID#
+							GROUP BY SALE_ID
+						) BB ON AA.SALE_ID = BB.SALE_ID
+				WHERE	AA.SALE_ID	= #SALE_ID#
+			]]>
+		</update>
+		<delete id="DeleteSaleTran" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UBZ.SALE_TRAN
+				WHERE	SALE_ID = #SALE_ID#;
+				DELETE
+				FROM	UBZ.SALE_TRAN_ITEM
+				WHERE	SALE_ID	= #SALE_ID#
+			]]>
+		</delete>
+
+		<select id="GetSaleNo" parameterClass="DataMap" resultClass="String" >
+			<![CDATA[
+				SELECT  ISNULL(MAX(SALE_NO), #SALE_NO#+'000')	AS SALE_NO
+				FROM	UBZ.SALE_TRAN AA WITH (NOLOCK)
+				WHERE	AA.SALE_NO LIKE #SALE_NO# + '%'
+				]]>
+		</select>
+
+		<insert id="InsertSaleTranItem" parameterClass="DataMap" >
+			<![CDATA[
+				INSERT INTO UBZ.SALE_TRAN_ITEM
+				( 
+					SALE_ID, PRODUCT_ID, SALE_PRICE, DISC_RATE, DISC_PRICE, SALE_QTY, SALE_AMT, DISC_AMT, NPAY_AMT, DISC_TYPE, INS_TIME, INS_USER 
+				)
+				VALUES
+				( 
+					#SALE_ID#, #PRODUCT_ID#, #SALE_PRICE#, #DISC_RATE#, #DISC_PRICE#, #SALE_QTY#, #SALE_AMT#, #DISC_AMT#, #NPAY_AMT#, #DISC_TYPE#, GETDATE(), #INS_USER# 
+				)
+			]]>
+			<selectKey type="post" property="ITEM_ID" resultClass="Int">
+				<![CDATA[
+					SELECT @@IDENTITY AS ITEM_ID
+				]]>
+			</selectKey>
+		</insert>
+		<update id="UpdateSaleTranItem" parameterClass="DataMap">
+			<![CDATA[
+				UPDATE  UBZ.SALE_TRAN
+				SET     PRODUCT_ID	= #PRODUCT_ID#
+					,	SALE_PRICE	= #SALE_PRICE#
+					,	DISC_RATE	= #DISC_RATE#
+					,	DISC_PRICE	= #DISC_PRICE#
+					,	SALE_QTY	= #SALE_QTY#
+					,	SALE_AMT	= #SALE_AMT#
+					,	DISC_AMT	= #DISC_AMT#
+					,	NPAY_AMT	= #NPAY_AMT#
+					,	DISC_TYPE	= #DISC_TYPE#
+					,	UPD_TIME	= GETDATE()
+					,	UPD_USER	= #INS_USER#
+				WHERE	ITEM_ID		= #ITEM_ID#
+			]]>
+		</update>
+		<delete id="DeleteSaleTranItem" parameterClass="DataMap">
+			<![CDATA[
+				DELETE
+				FROM	UBZ.SALE_TRAN_ITEM
+				WHERE	ITEM_ID = #ITEM_ID#
+			]]>
+		</delete>
+
+		<select id="GetSaleCategory" parameterClass="DataMap" resultClass="SaleCategoryList" >
+			<![CDATA[
+				SELECT  AA.CODE		AS CATEGORY_CODE
+					,	AA.NAME		AS CATEGORY_NAME
+				FROM	UAA.CODES AA
+				WHERE	AA.PARENT_CODE = 'CATEGORY'
+				AND		AA.OPTION_VALUE1 = 'Y'
+				ORDER BY ISNULL(AA.SORT_SEQ, 99999), AA.NAME
+			]]>
+		</select>
+
+		<select id="GetSaleProducts" parameterClass="DataMap" resultClass="SaleProductsList" >
+			<![CDATA[
+				SELECT  AA.PRODUCT_ID
+					,	AA.PRODUCT_CODE
+					,	AA.PRODUCT_NAME
+					,	ISNULL(SP.SALE_PRICE, 0)	AS SALE_PRICE
+					,	ISNULL(IV.STOCK_QTY, 0)		AS STOCK_QTY
+				FROM	UCD.PRODUCTS AA
+						LEFT JOIN
+							UCD.SALES_PRICE SP 
+								ON AA.PRODUCT_ID = SP.PRODUCT_ID
+									AND SP.BEG_DATE <= CONVERT(VARCHAR(8), GETDATE(), 112)
+									AND SP.END_DATE >= CONVERT(VARCHAR(8), GETDATE(), 112)
+						LEFT JOIN
+							UBZ.INVENTORY IV
+								ON AA.PRODUCT_ID = IV.PRODUCT_ID
+				WHERE	AA.PRODUCT_TYPE IN ('G', 'P')
+				AND		AA.CATEGORY = #CATEGORY#
+				ORDER BY AA.PRODUCT_NAME
+			]]>
+		</select>
+
+		<select id="GetSaleSumData" parameterClass="DataMap" resultClass="SaleSumData" >
+			<![CDATA[
+				SELECT  SUM(CASE WHEN AA.SALE_DATE = CONVERT(VARCHAR(8), GETDATE(), 112) THEN 1 ELSE 0 END)	AS SALE_DAY_COUNT
+					,	SUM(CASE WHEN AA.SALE_DATE = CONVERT(VARCHAR(8), GETDATE(), 112) THEN AA.TOT_NPAY_AMT ELSE 0 END)	AS SALE_DAY_AMOUNT
+					,	SUM(AA.TOT_NPAY_AMT)	AS SALE_MON_AMOUNT
+				FROM	UBZ.SALE_TRAN AA
+				WHERE	AA.SALE_DATE >= CONVERT(VARCHAR(6), GETDATE(), 112) + '01'
+				AND		AA.SALE_DATE <= CONVERT(VARCHAR(8), GETDATE(), 112)
+			]]>
+		</select>
+		
+		<select id="GetSaleRequests" parameterClass="DataMap" resultClass="SaleRequests" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.SALE_ID, BB.ITEM_ID)	AS ROW_NO
+					,	AA.SALE_ID
+					,	AA.SALE_NO
+					,	dbo.DateCharToChar10(AA.SALE_DATE)	AS SALE_DATE
+					,	ISNULL(M3.NAME, AA.SALE_TYPE)		AS SALE_TYPE
+					,	ISNULL(M4.NAME, AA.PAY_TYPE)		AS PAY_TYPE
+					,	AA.CUSTOMER_ID
+					,	CC.CUSTOMER_NAME
+					,	AA.REMARKS
+					,	ROW_NUMBER() OVER (PARTITION BY AA.SALE_ID ORDER BY BB.ITEM_ID)	AS ITEM_NO
+					,	BB.ITEM_ID
+					,	BB.PRODUCT_ID
+					,	PP.PRODUCT_CODE
+					,	PP.PRODUCT_NAME
+					,	BB.SALE_PRICE
+					,	BB.DISC_RATE
+					,	BB.DISC_PRICE
+					,	BB.SALE_QTY
+					,	BB.SALE_AMT
+					,	BB.DISC_AMT
+					,	BB.NPAY_AMT
+					,	ISNULL(M1.NAME, PP.PRODUCT_TYPE)	AS PRODUCT_TYPE
+					,	ISNULL(M2.NAME, PP.CATEGORY)		AS CATEGORY
+					,	dbo.DateTimeToChar20(AA.INS_TIME)	AS INS_TIME
+					,	AA.INS_USER
+					,	U1.USER_NAME						AS INS_USER_NAME
+					,	dbo.DateTimeToChar20(AA.UPD_TIME)	AS UPD_TIME
+					,	AA.UPD_USER
+					,	U2.USER_NAME						AS UPD_USER_NAME
+				FROM	UBZ.SALE_TRAN AA
+						INNER JOIN
+							UBZ.SALE_TRAN_ITEM BB 
+								ON AA.SALE_ID = BB.SALE_ID
+						LEFT JOIN
+							UCD.CUSTOMERS CC
+								ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+						LEFT JOIN
+							UCD.PRODUCTS PP
+								ON BB.PRODUCT_ID = PP.PRODUCT_ID
+						LEFT JOIN 
+							UAA.CODES M1 WITH (NOLOCK)
+								ON PP.PRODUCT_TYPE = M1.CODE 
+									AND M1.PARENT_CODE = 'PRODUCT_TYPE'
+						LEFT JOIN
+							UAA.CODES M2 WITH (NOLOCK)
+								ON PP.CATEGORY = M2.CODE
+									AND M2.PARENT_CODE = 'CATEGORY'
+						LEFT JOIN
+							UAA.CODES M3
+								ON AA.SALE_TYPE = M3.CODE 
+									AND M3.PARENT_CODE = 'SALE_TYPE'
+						LEFT JOIN
+							UAA.CODES M4
+								ON AA.PAY_TYPE = M4.CODE 
+									AND M4.PARENT_CODE = 'PAY_TYPE'
+						LEFT JOIN 
+							UAA.USERS U1
+								ON AA.INS_USER = U1.USER_ID
+						LEFT JOIN
+							UAA.USERS U2
+								ON AA.UPD_USER = U2.USER_ID
+				WHERE	1=1
+			]]>
+			<isNotEmpty property="ST_SALE_DATE">
+				<![CDATA[
+				AND		AA.SALE_DATE >= #ST_SALE_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="ED_SALE_DATE">
+				<![CDATA[
+				AND		AA.SALE_DATE <= #ED_SALE_DATE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="CUSTOMER_ID">
+				<![CDATA[
+				AND		AA.CUSTOMER_ID = #CUSTOMER_ID#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="PRODUCT_ID">
+				<![CDATA[
+				AND		BB.PRODUCT_ID = #PRODUCT_ID#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="PRODUCT_TYPE">
+				<![CDATA[
+				AND		PP.PRODUCT_TYPE = #PRODUCT_TYPE#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="CATEGORY">
+				<![CDATA[
+				AND		PP.CATEGORY = #CATEGORY#
+			]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ROW_NO
+			]]>
+		</select>
+
+		<select id="GetSaleProductList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.SALE_AMT DESC)	AS ROW_NO
+					,	AA.PRODUCT_ID
+					,	PP.PRODUCT_CODE
+					,	PP.PRODUCT_NAME
+					,	AA.SALE_QTY
+					,	AA.SALE_AMT
+				FROM	(
+							SELECT	BB.PRODUCT_ID
+								,	SUM(BB.SALE_QTY)	AS SALE_QTY
+								,	SUM(BB.NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+									INNER JOIN
+										UBZ.SALE_TRAN_ITEM BB 
+											ON AA.SALE_ID = BB.SALE_ID
+							WHERE	AA.SALE_DATE >= #ST_SALE_DATE#
+							AND		AA.SALE_DATE <= #ED_SALE_DATE#
+							GROUP BY BB.PRODUCT_ID
+						) AA
+						LEFT JOIN
+							UCD.PRODUCTS PP
+								ON AA.PRODUCT_ID = PP.PRODUCT_ID
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<select id="GetSaleCustomerList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.SALE_AMT DESC)	AS ROW_NO
+					,	AA.CUSTOMER_ID
+					,	ISNULL(CC.CUSTOMER_NAME,'일반고객')	AS CUSTOMER_NAME
+					,	AA.SALE_QTY
+					,	AA.SALE_AMT
+				FROM	(
+							SELECT	AA.CUSTOMER_ID
+								,	SUM(BB.SALE_QTY)	AS SALE_QTY
+								,	SUM(BB.NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+									INNER JOIN
+										UBZ.SALE_TRAN_ITEM BB 
+											ON AA.SALE_ID = BB.SALE_ID
+							WHERE	AA.SALE_DATE >= #ST_SALE_DATE#
+							AND		AA.SALE_DATE <= #ED_SALE_DATE#
+							GROUP BY AA.CUSTOMER_ID
+						) AA
+						LEFT JOIN
+							UCD.CUSTOMERS CC
+								ON AA.CUSTOMER_ID = CC.CUSTOMER_ID
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<select id="GetSaleCategoryList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.SALE_AMT DESC)	AS ROW_NO
+					,	ISNULL(MM.NAME, AA.CATEGORY)	AS CATEGORY
+					,	AA.SALE_QTY
+					,	AA.SALE_AMT
+				FROM	(
+							SELECT	PP.CATEGORY
+								,	SUM(BB.SALE_QTY)	AS SALE_QTY
+								,	SUM(BB.NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+									INNER JOIN
+										UBZ.SALE_TRAN_ITEM BB 
+											ON AA.SALE_ID = BB.SALE_ID
+									LEFT JOIN
+										UCD.PRODUCTS PP
+											ON BB.PRODUCT_ID = PP.PRODUCT_ID
+							WHERE	AA.SALE_DATE >= #ST_SALE_DATE#
+							AND		AA.SALE_DATE <= #ED_SALE_DATE#
+							GROUP BY PP.CATEGORY
+						) AA
+						LEFT JOIN
+							UAA.CODES MM
+								ON AA.CATEGORY = MM.CODE
+									AND MM.PARENT_CODE = 'CATEGORY'
+				ORDER BY ROW_NO
+			]]>
+		</select>
+		<select id="GetSalePayTypeList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT  ROW_NUMBER() OVER (ORDER BY AA.SALE_AMT DESC)	AS ROW_NO
+					,	ISNULL(MM.NAME, AA.PAY_TYPE)					AS PAY_TYPE
+					,	AA.SALE_QTY
+					,	AA.SALE_AMT
+				FROM	(
+							SELECT	AA.PAY_TYPE
+								,	SUM(BB.SALE_QTY)	AS SALE_QTY
+								,	SUM(BB.NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+									INNER JOIN
+										UBZ.SALE_TRAN_ITEM BB 
+											ON AA.SALE_ID = BB.SALE_ID
+							WHERE	AA.SALE_DATE >= #ST_SALE_DATE#
+							AND		AA.SALE_DATE <= #ED_SALE_DATE#
+							GROUP BY AA.PAY_TYPE
+						) AA
+						LEFT JOIN
+							UAA.CODES MM
+								ON AA.PAY_TYPE = MM.CODE
+									AND MM.PARENT_CODE = 'PAY_TYPE'
+				ORDER BY ROW_NO
+			]]>
+		</select>
+
+		<select id="GetSaleDaily" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CAL_DATE				AS SALE_DATE
+					,	ISNULL(BB.SALE_AMT, 0)	AS SALE_AMT
+				FROM	UAA.CALENDAR AA
+						LEFT JOIN
+						(
+							SELECT	AA.SALE_DATE			AS SALE_DATE
+								,	SUM(AA.TOT_NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+							WHERE	AA.SALE_DATE >= CONVERT(VARCHAR(8), DATEADD(DAY, -30, GETDATE()), 112)
+							AND		AA.SALE_DATE <= CONVERT(VARCHAR(8), GETDATE(), 112)
+							GROUP BY AA.SALE_DATE
+						) BB ON AA.CAL_DATE = BB.SALE_DATE
+				WHERE	AA.CAL_DATE >= CONVERT(VARCHAR(8), DATEADD(DAY, -30, GETDATE()), 112)
+				AND		AA.CAL_DATE	<= CONVERT(VARCHAR(8), GETDATE(), 112)
+				ORDER BY SALE_DATE
+			]]>
+		</select>
+		<select id="GetSaleMonthly" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	LEFT(AA.CAL_DATE, 6)	AS SALE_YM
+					,	ISNULL(BB.SALE_AMT, 0)	AS SALE_AMT
+				FROM	UAA.CALENDAR AA
+						LEFT JOIN
+						(
+							SELECT	LEFT(AA.SALE_DATE, 6)	AS SALE_YM
+								,	SUM(AA.TOT_NPAY_AMT)	AS SALE_AMT
+							FROM	UBZ.SALE_TRAN AA
+							WHERE	AA.SALE_DATE >= CONVERT(VARCHAR(8), DATEADD(MONTH, -12, GETDATE()), 112)
+							AND		AA.SALE_DATE <= CONVERT(VARCHAR(8), GETDATE(), 112)
+							GROUP BY LEFT(AA.SALE_DATE, 6)
+						) BB ON LEFT(AA.CAL_DATE, 6) = BB.SALE_YM
+				WHERE	AA.CAL_DATE >= CONVERT(VARCHAR(8), DATEADD(MONTH, -12, GETDATE()), 112)
+				AND		AA.CAL_DATE <= CONVERT(VARCHAR(8), GETDATE(), 112)
+				ORDER BY SALE_YM
+			]]>
+		</select>
+	</statements>
+</sqlMap>

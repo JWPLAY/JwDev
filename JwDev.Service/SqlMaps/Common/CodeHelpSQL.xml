@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sqlMap
+	namespace="JwDev.Service.SqlMaps"
+	xmlns="http://ibatis.apache.org/mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+	<statements>
+		<select id="GetCodeHelp" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CODE
+					,	AA.NAME
+					,	AA.NAME		AS LIST_NAME
+				FROM	UAA.CODES AA WITH (NOLOCK)
+				WHERE	AA.USE_YN	= 'Y'
+				AND		AA.PARENT_CODE	= #PARENT_CODE#
+				ORDER BY AA.SORT_SEQ, AA.NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpCodeGroupList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CODE
+					,	AA.NAME
+					,	AA.NAME		AS LIST_NAME
+				FROM	UAA.CODES AA WITH (NOLOCK)
+				WHERE	AA.USE_YN	= 'Y'
+				AND		AA.PARENT_CODE IS NULL
+				ORDER BY AA.SORT_SEQ, AA.NAME ASC
+			]]>
+		</select>
+		
+		<select id="GetCodeHelpMenuList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				WITH MenusCTE (id, name, path, pid, hier_id, level)
+				AS
+				(
+					SELECT	AA.MenuId								as id
+						,	AA.MenuName								as name
+						,	convert(varchar(1000), AA.MenuName)		as path
+						,	AA.ParentMenuId							as pid
+						,	convert(varchar(1000), right('000000' + convert(varchar, AA.SortSeq), 6))		as hier_Id
+						,	1										as level
+					FROM	Menus aa
+					WHERE	AA.ParentMenuId IS NULL
+					AND		AA.UseYn = 'Y'
+					UNION ALL
+					SELECT	AA.MenuId																	as id
+						,	AA.MenuName																	as name
+						,	convert(varchar(1000), bb.name + ' ▶ ' + AA.MenuName)						as path
+						,	AA.ParentMenuId																as pid
+						,	convert(varchar(1000), bb.hier_id + '-' + right('000000'+convert(varchar, AA.SortSeq), 6))	as hier_id
+						,	bb.level + 1																as level
+					FROM	Menus aa
+							INNER JOIN MenusCTE bb on AA.ParentMenuId = bb.id
+					WHERE	AA.UseYn = 'Y'
+				)
+				SELECT	AA.id												as CODE
+					,	AA.path												as NAME
+					,	replicate(' ', (AA.level -1) * 5) + '▶' + AA.name	as LIST_NAME
+				FROM	MenusCTE aa
+				ORDER BY AA.hier_id ASC
+			]]>
+		</select>
+		
+		<select id="GetCodeHelpCodeList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CODE			AS CODE
+					,	AA.NAME			AS NAME
+					,	AA.NAME			AS LIST_NAME
+				FROM	UAA.CODES AA WITH (NOLOCK)
+				WHERE	AA.PARENT_CODE IS NULL
+				ORDER BY AA.SORT_SEQ, AA.NAME ASC
+			]]>
+		</select>
+		
+		<select id="GetCodeHelpCustomerList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.CUSTOMER_ID
+					,	AA.CUSTOMER_NAME
+					,	BZ.BIZ_REG_NO
+					,	BZ.REP_NAME
+				FROM	UCD.CUSTOMERS AA WITH (NOLOCK)
+						LEFT JOIN
+							UCD.BIZ_REG_CE BZ
+								ON AA.BIZ_REG_ID = BZ.BIZ_REG_ID
+				WHERE	1=1
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.CUSTOMER_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							BZ.BIZ_REG_NO		= #FIND_TEXT#					OR
+							BZ.REP_NAME			= #FIND_TEXT#					OR
+							BZ.BIZ_NAME			LIKE '%' + #FIND_TEXT# + '%'							
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.CUSTOMER_NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpProductList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.PRODUCT_ID
+					,	AA.PRODUCT_NAME
+					,	AA.PRODUCT_CODE
+					,	ISNULL(M1.NAME, AA.UNIT_TYPE)	AS PRODUCT_UNIT
+				FROM	UCD.PRODUCTS AA WITH (NOLOCK)
+						LEFT JOIN
+							UAA.CODES M1 
+								ON AA.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+				WHERE	1=1
+				AND		AA.PRODUCT_TYPE IN ('P','G')
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.PRODUCT_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.PRODUCT_CODE	LIKE #FIND_TEXT# + '%'			OR
+							AA.BARCODE		= #FIND_TEXT#
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.PRODUCT_NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpProdProductList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.PRODUCT_ID
+					,	AA.PRODUCT_NAME
+					,	AA.PRODUCT_CODE
+					,	ISNULL(M1.NAME, AA.UNIT_TYPE)	AS PRODUCT_UNIT
+				FROM	UCD.PRODUCTS AA WITH (NOLOCK)
+						LEFT JOIN
+							UAA.CODES M1 
+								ON AA.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+				WHERE	1=1
+				AND		AA.PRODUCT_TYPE IN ('P')
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.PRODUCT_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.PRODUCT_CODE	LIKE #FIND_TEXT# + '%'			OR
+							AA.BARCODE		= #FIND_TEXT#
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.PRODUCT_NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpAllProductList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	ISNULL(M2.NAME, AA.PRODUCT_TYPE)	AS PRODUCT_TYPE
+					,	ISNULL(M3.NAME, AA.CATEGORY)		AS CATEGORY
+					,	AA.PRODUCT_ID
+					,	AA.PRODUCT_NAME
+					,	AA.PRODUCT_CODE
+					,	ISNULL(M1.NAME, AA.UNIT_TYPE)	AS PRODUCT_UNIT
+				FROM	UCD.PRODUCTS AA WITH (NOLOCK)
+						LEFT JOIN
+							UAA.CODES M1 
+								ON AA.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+						LEFT JOIN
+							UAA.CODES M2
+								ON AA.PRODUCT_TYPE = M2.CODE
+									AND M2.PARENT_CODE = 'PRODUCT_TYPE'
+						LEFT JOIN
+							UAA.CODES M3
+								ON AA.CATEGORY = M3.CODE
+									AND M3.PARENT_CODE = 'CATEGORY'
+				WHERE	1=1
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.PRODUCT_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.PRODUCT_CODE	LIKE #FIND_TEXT# + '%'			OR
+							AA.BARCODE		= #FIND_TEXT#
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY 
+					ISNULL(M2.SORT_SEQ, 99999), AA.PRODUCT_TYPE,
+					ISNULL(M3.SORT_SEQ, 99999), AA.CATEGORY,
+					AA.PRODUCT_NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpMaterialList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.PRODUCT_ID			AS MATERIAL_ID
+					,	AA.PRODUCT_NAME			AS MATERIAL_NAME
+					,	M1.NAME					AS UNIT_TYPE
+				FROM	UCD.PRODUCTS AA WITH (NOLOCK)
+						LEFT JOIN
+							UAA.CODES M1
+								ON AA.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+				WHERE	1=1
+				AND		AA.PRODUCT_TYPE IN ('M')
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.PRODUCT_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.PRODUCT_CODE	LIKE #FIND_TEXT# + '%'
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY AA.PRODUCT_NAME ASC
+			]]>
+		</select>
+
+		<select id="GetCodeHelpPurcitemList" parameterClass="DataMap" resultClass="DataMap" >
+			<![CDATA[
+				SELECT	AA.PRODUCT_ID
+					,	AA.PRODUCT_NAME
+					,	AA.PRODUCT_CODE
+					,	ISNULL(M1.NAME, AA.UNIT_TYPE)		AS PRODUCT_UNIT
+					,	ISNULL(M2.NAME, AA.PRODUCT_TYPE)	AS PRODUCT_TYPE
+				FROM	UCD.PRODUCTS AA WITH (NOLOCK)
+						LEFT JOIN
+							UAA.CODES M1 
+								ON AA.UNIT_TYPE = M1.CODE
+									AND M1.PARENT_CODE = 'UNIT_TYPE'
+						LEFT JOIN
+							UAA.CODES M2
+								ON AA.PRODUCT_TYPE = M2.CODE
+									AND M2.PARENT_CODE = 'PRODUCT_TYPE'
+				WHERE	1=1
+				AND		AA.PRODUCT_TYPE IN ('M','G')
+			]]>
+			<isNotEmpty property="FIND_TEXT">
+				<![CDATA[
+				AND		(
+							AA.PRODUCT_NAME	LIKE '%' + #FIND_TEXT# + '%'	OR
+							AA.PRODUCT_CODE	LIKE #FIND_TEXT# + '%'			OR
+							AA.BARCODE		= #FIND_TEXT#
+						)
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="USE_YN">
+				<![CDATA[
+					AND	AA.USE_YN = #USE_YN#
+				]]>
+			</isNotEmpty>
+			<![CDATA[
+				ORDER BY ISNULL(M2.SORT_SEQ, 99999), AA.PRODUCT_TYPE, AA.PRODUCT_NAME ASC
+			]]>
+		</select>
+	</statements>
+</sqlMap>
