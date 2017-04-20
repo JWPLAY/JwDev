@@ -4,7 +4,7 @@ using System.Data;
 using JwDev.Base.Utils;
 using JwDev.Model.Map;
 using JwDev.Model.Purchase;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 using JwDev.Service.Utils;
 
@@ -18,7 +18,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
@@ -31,10 +31,10 @@ namespace JwDev.Service.Services
 				var data = DaoFactory.Instance.QueryForObject<PurcTranDataModel>("GetPurcTran", req.Requests[0].Parameter);
 				var list = DaoFactory.Instance.QueryForList<PurcTranItemDataModel>("GetPurcTranItem", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData(){ Data = data },
-					new RequestData(){ Data = list }
+					new WasRequest(){ Data = data },
+					new WasRequest(){ Data = list }
 				};
 				return req;
 			}
@@ -52,7 +52,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 
@@ -203,7 +203,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Delete(RequestDataSet req)
+		public static WasRequestSet Delete(WasRequestSet req)
 		{
 			try
 			{
@@ -233,7 +233,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetPurcRequests(RequestDataSet req)
+		public static WasRequestSet GetPurcRequests(WasRequestSet req)
 		{
 			try
 			{

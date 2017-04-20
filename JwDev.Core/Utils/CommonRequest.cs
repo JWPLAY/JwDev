@@ -1,6 +1,6 @@
 ﻿using System;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 
 namespace JwDev.Core.Utils
@@ -11,7 +11,7 @@ namespace JwDev.Core.Utils
 		{
 			try
 			{
-				var res = RequestHelper.Execute("Base", "Save", "Address", map, "ADDRESS_ID");
+				var res = WasHelper.Execute("Base", "Save", "Address", map, "ADDRESS_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

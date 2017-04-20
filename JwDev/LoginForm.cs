@@ -3,8 +3,8 @@ using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using JwDev.Base.Constants;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Core.Base.Forms;
@@ -137,7 +137,7 @@ namespace JwDev
 					return;
 				}
 
-				var data = RequestHelper.GetData("Auth", "CheckLoginUser", null, new DataMap()
+				var data = WasHelper.GetData("Auth", "CheckLoginUser", null, new DataMap()
 				{
 					{ "LOGIN_ID", txtLoginId.EditValue },
 					{ "LOGIN_PW", txtPassword.EditValue }

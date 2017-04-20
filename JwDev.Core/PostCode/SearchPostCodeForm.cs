@@ -2,7 +2,7 @@
 using System.Security.Permissions;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Core.Messages;
 using Newtonsoft.Json.Linq;
 

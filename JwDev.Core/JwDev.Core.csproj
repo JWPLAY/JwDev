@@ -631,6 +631,10 @@
     <None Include="Resources\back_white.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JwDev.Base\JwDev.Base.csproj">
+      <Project>{C18DA53B-5D3C-4AB0-A5F2-5EE399AF54CC}</Project>
+      <Name>JwDev.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JwDev.Model\JwDev.Model.csproj">
       <Project>{30f5ec55-1d6c-4ea3-89b0-f9cd6b60a17c}</Project>
       <Name>JwDev.Model</Name>

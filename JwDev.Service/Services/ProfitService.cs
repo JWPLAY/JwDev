@@ -1,13 +1,13 @@
 ﻿using System;
 using JwDev.Model.Profit;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 
 namespace JwDev.Service.Services
 {
 	public static class ProfitService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{

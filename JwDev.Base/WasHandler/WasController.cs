@@ -1,7 +1,7 @@
 ﻿using System;
 using JwDev.Base.Logging;
 using JwDev.Base.Utils;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 
 namespace JwDev.Base.WasHandler
 {
@@ -9,7 +9,7 @@ namespace JwDev.Base.WasHandler
 	{
 		private const string assemblyName = @"JwDev.Service";
 
-		public RequestDataSet Execute(RequestDataSet req)
+		public WasRequestSet Execute(WasRequestSet req)
 		{
 			var namespaceName = string.Format("JwDev.Service.Services.{0}Service", req.ServiceId);
 			var methodName = req.ProcessId;
@@ -17,7 +17,7 @@ namespace JwDev.Base.WasHandler
 			try
 			{
 				Logger.Info(string.Format("WasController=> {0}.{1}", namespaceName, methodName));
-				var result = (RequestDataSet)TypeUtils.InvokeMethodByParam(assemblyName, namespaceName, methodName, req);
+				var result = (WasRequestSet)TypeUtils.InvokeMethodByParam(assemblyName, namespaceName, methodName, req);
 				return result;
 			}
 			catch (Exception ex)

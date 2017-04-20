@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -160,7 +160,7 @@ namespace JwDev.Core.Forms.Inventory
 		{
 			try
 			{
-				var res = RequestHelper.GetData<InvAdjsDataModel>("InvAdjs", new DataMap() { { "ADJS_ID", id } });
+				var res = WasHelper.GetData<InvAdjsDataModel>("InvAdjs", new DataMap() { { "ADJS_ID", id } });
 
 				txtAdjsId.EditValue = res.ADJS_ID;
 				datAdjsDate.SetDateChar8(res.ADJS_DATE);
@@ -192,7 +192,7 @@ namespace JwDev.Core.Forms.Inventory
 				DataMap map = lcGroupEdit.ItemToDataMap();
 				map.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute("InvAdjs", "Save", map, "ADJS_ID");
+				var res = WasHelper.Execute("InvAdjs", "Save", map, "ADJS_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -215,7 +215,7 @@ namespace JwDev.Core.Forms.Inventory
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("InvAdjs", "Save", data, null);
+				var res = WasHelper.Execute("InvAdjs", "Save", data, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

@@ -15,9 +15,9 @@ using DevExpress.XtraSplashScreen;
 using DevExpress.XtraTabbedMdi;
 using DevExpress.XtraTreeList;
 using JwDev.Base.Constants;
-using JwDev.Base.DBTran.Controller;
+using JwDev.Base.WasHandler;
 using JwDev.Base.Logging;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Core.Base.Forms;
@@ -356,7 +356,7 @@ namespace JwDev
 		{
 			try
 			{
-				//var res = RequestHelper.SingleRequest("Auth", "Logout", null, new DataMap()
+				//var res = WasHelper.SingleRequest("Auth", "Logout", null, new DataMap()
 				//{
 				//	{ "USER_ID", GlobalVar.Settings.GetValue("USER_ID") },
 				//	{ "MAC_ADDRESS", CommonUtils.GetMacAddress() }
@@ -618,7 +618,7 @@ namespace JwDev
 			{
 				if (mainMenu != null)
 				{
-					var list = RequestHelper.GetData<List<MainMenuDataModel>>("Auth", "GetMainMenus", "MainMenus", new DataMap()
+					var list = WasHelper.GetData<List<MainMenuDataModel>>("Auth", "GetMainMenus", "MainMenus", new DataMap()
 					{
 						{ "USER_ID", GlobalVar.Settings.GetValue("USER_ID") },
 						{ "MENU_GROUP", "BIZ" }
@@ -648,7 +648,7 @@ namespace JwDev
 					var navGroup = navBarNavigate.Groups.Where(x => x.Name == "navBarGroupSystem").FirstOrDefault();
 					navGroup.ItemLinks.Clear();
 
-					var list = RequestHelper.GetData<List<MainMenuDataModel>>("Auth", "GetMainMenus", "MainMenus", new DataMap()
+					var list = WasHelper.GetData<List<MainMenuDataModel>>("Auth", "GetMainMenus", "MainMenus", new DataMap()
 					{
 						{ "USER_ID", GlobalVar.Settings.GetValue("USER_ID") },
 						{ "MENU_GROUP", "SYS" }

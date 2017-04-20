@@ -1,5 +1,5 @@
-﻿using JwDev.Base.Map;
-using JwDev.Base.Utils;
+﻿using JwDev.Base.Utils;
+using JwDev.Model.Map;
 
 namespace JwDev.Service.Config
 {

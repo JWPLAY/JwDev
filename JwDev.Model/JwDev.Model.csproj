@@ -53,8 +53,8 @@
     <Compile Include="DataModels\CD\ProductListModel.cs" />
     <Compile Include="DataModels\CD\SalesPriceDataModel.cs" />
     <Compile Include="DataModels\CD\SalesPriceListModel.cs" />
-    <Compile Include="RequestModels\RequestData.cs" />
-    <Compile Include="RequestModels\RequestDataSet.cs" />
+    <Compile Include="WasModels\WasRequest.cs" />
+    <Compile Include="WasModels\WasRequestSet.cs" />
     <Compile Include="Enums\ColumnTypeEnum.cs" />
     <Compile Include="Enums\FormatTypeEnum.cs" />
     <Compile Include="Enums\HorzAlignmentEnum.cs" />

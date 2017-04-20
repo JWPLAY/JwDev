@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Model.System;
 using JwDev.Service.Mappers;
@@ -11,14 +11,14 @@ namespace JwDev.Service.Services
 {
 	public static class DatabaseService
 	{
-		public static RequestDataSet GetTableList(RequestDataSet reqset)
+		public static WasRequestSet GetTableList(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					req.Parameter.SetValue("INS_USER", reqset.UserId);
 					req.Data = DaoFactory.Instance.QueryForList<TableListModel>(req.SqlId, req.Parameter);
@@ -33,14 +33,14 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetColumnList(RequestDataSet reqset)
+		public static WasRequestSet GetColumnList(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					req.Parameter.SetValue("INS_USER", reqset.UserId);
 					req.Data = DaoFactory.Instance.QueryForList<ColumnListModel>(req.SqlId, req.Parameter);
@@ -55,7 +55,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 

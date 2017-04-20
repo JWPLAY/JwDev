@@ -3,7 +3,7 @@ using System.Drawing;
 using DevExpress.Data;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;

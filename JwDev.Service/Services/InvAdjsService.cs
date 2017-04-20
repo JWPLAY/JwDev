@@ -2,14 +2,14 @@
 using JwDev.Base.Utils;
 using JwDev.Model.Inventory;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 
 namespace JwDev.Service.Services
 {
 	public static class InvAdjsService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{
@@ -25,7 +25,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
@@ -41,7 +41,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 

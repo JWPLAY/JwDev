@@ -2,14 +2,14 @@
 using JwDev.Base.Utils;
 using JwDev.Model.Map;
 using JwDev.Model.Production;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 
 namespace JwDev.Service.Services
 {
 	public static class ProductionService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{
@@ -25,17 +25,17 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
 				var data = DaoFactory.Instance.QueryForObject<ProdTranDataModel>("GetProdTranData", req.Requests[0].Parameter);
 				var list = DaoFactory.Instance.QueryForList<DataMap>("GetProdMaterials", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = data },
-					new RequestData() { Data = list }
+					new WasRequest() { Data = data },
+					new WasRequest() { Data = list }
 				};
 				return req;
 			}
@@ -47,7 +47,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 

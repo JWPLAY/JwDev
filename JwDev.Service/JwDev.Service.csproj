@@ -186,6 +186,16 @@
   <ItemGroup>
     <EmbeddedResource Include="SqlMaps\Auth\DatabaseSQL.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JwDev.Base\JwDev.Base.csproj">
+      <Project>{C18DA53B-5D3C-4AB0-A5F2-5EE399AF54CC}</Project>
+      <Name>JwDev.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JwDev.Model\JwDev.Model.csproj">
+      <Project>{30F5EC55-1D6C-4EA3-89B0-F9CD6B60A17C}</Project>
+      <Name>JwDev.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

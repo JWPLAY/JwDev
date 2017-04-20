@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -177,7 +177,7 @@ namespace JwDev.Core.Forms.Production
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Production", new DataMap() { { "PROD_ID", id } });
+				var res = WasHelper.GetData("Production", new DataMap() { { "PROD_ID", id } });
 
 				if (res.Requests.Length > 0)
 				{
@@ -217,7 +217,7 @@ namespace JwDev.Core.Forms.Production
 				DataMap map = lcGroupEdit.ItemToDataMap();
 				map.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute("Production", "Save", map, "PROD_ID");
+				var res = WasHelper.Execute("Production", "Save", map, "PROD_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -240,7 +240,7 @@ namespace JwDev.Core.Forms.Production
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Production", "Save", data, null);
+				var res = WasHelper.Execute("Production", "Save", data, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

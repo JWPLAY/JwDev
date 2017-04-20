@@ -8,10 +8,9 @@ using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraLayout;
-using JwDev.Base.Map;
 using JwDev.Base.Utils;
-using JwDev.Core.Controls;
 using JwDev.Core.Controls.Common;
+using JwDev.Model.Map;
 
 namespace JwDev.Core.Utils
 {

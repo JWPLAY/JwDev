@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Helper;
 using JwDev.Core.Messages;

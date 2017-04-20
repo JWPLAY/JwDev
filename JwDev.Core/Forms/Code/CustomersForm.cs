@@ -6,9 +6,9 @@ using DevExpress.Utils;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -313,7 +313,7 @@ namespace JwDev.Core.Forms.Code
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Customer", new DataMap() { { "CUSTOMER_ID", id } });
+				var res = WasHelper.GetData("Customer", new DataMap() { { "CUSTOMER_ID", id } });
 
 				if (res == null)
 					throw new Exception("처리결과를 수신하지 못했습니다.");
@@ -387,15 +387,15 @@ namespace JwDev.Core.Forms.Code
 					.SetValue("ADDRESS_ID", mAddressId)
 					.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Customer",
 					ProcessId = "Save",
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData() { Data = dt },
-						new RequestData() { Data = GetPhoneData() },
-						new RequestData() { Data = GetAddressData() }
+						new WasRequest() { Data = dt },
+						new WasRequest() { Data = GetPhoneData() },
+						new WasRequest() { Data = GetAddressData() }
 					}
 				});
 				if (res.ErrorNumber != 0)
@@ -425,7 +425,7 @@ namespace JwDev.Core.Forms.Code
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Customer", data, "CUSTOMER_ID");
+				var res = WasHelper.Execute("Base", "Save", "Customer", data, "CUSTOMER_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -551,7 +551,7 @@ namespace JwDev.Core.Forms.Code
 				}
 				else
 				{
-					var res = RequestHelper.Execute("Base", "Save", "CustomerPhones", dt, null);
+					var res = WasHelper.Execute("Base", "Save", "CustomerPhones", dt, null);
 					if (res.ErrorNumber != 0)
 						throw new Exception(res.ErrorMessage);
 
@@ -592,7 +592,7 @@ namespace JwDev.Core.Forms.Code
 				}
 				else
 				{
-					var res = RequestHelper.Execute("Customer", "SaveCustomerAddress", "CustomerAddress", dt, null);
+					var res = WasHelper.Execute("Customer", "SaveCustomerAddress", "CustomerAddress", dt, null);
 					if (res.ErrorNumber != 0)
 						throw new Exception(res.ErrorMessage);
 

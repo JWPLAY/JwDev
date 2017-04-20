@@ -1,6 +1,6 @@
 ﻿using DevExpress.Data;
 using DevExpress.Utils;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Utils;

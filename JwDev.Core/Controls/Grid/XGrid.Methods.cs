@@ -13,7 +13,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using DevExpress.XtraPrinting;
 using JwDev.Base.Constants;
-using JwDev.Base.DataRequest;
+using JwDev.Base.WasHandler;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Core.Messages;
@@ -1030,7 +1030,7 @@ namespace JwDev.Core.Controls.Grid
 			try
 			{
 				int rowIndex = this.MainView.FocusedRowHandle;
-				this.DataSource = RequestHelper.GetData(serviceId, processId, sqlId, param).Requests[0].Data;
+				this.DataSource = WasHelper.GetData(serviceId, processId, sqlId, param).Requests[0].Data;
 				if (this.DataSource == null)
 				{
 					this.EmptyDataTableBinding();

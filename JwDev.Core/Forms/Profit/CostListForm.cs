@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -119,7 +119,7 @@ namespace JwDev.Core.Forms.Profit
 
 			try
 			{
-				var res = RequestHelper.ProcedureCall("CreateCostPrice", new DataMap() { { "CLOSING_YM", datClosingYm.GetDateChar6() } });
+				var res = WasHelper.ProcedureCall("CreateCostPrice", new DataMap() { { "CLOSING_YM", datClosingYm.GetDateChar6() } });
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

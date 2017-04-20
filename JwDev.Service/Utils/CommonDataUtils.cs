@@ -1,5 +1,5 @@
 ﻿using System;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Service.Mappers;
 

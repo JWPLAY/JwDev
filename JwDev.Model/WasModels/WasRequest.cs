@@ -3,10 +3,10 @@ using System.Data;
 using System.Runtime.Serialization;
 using JwDev.Model.Map;
 
-namespace JwDev.Model.RequestModels
+namespace JwDev.Model.WasModels
 {
 	[DataContract]
-	public class RequestData : IDisposable
+	public class WasRequest : IDisposable
 	{
 		[DataMember]
 		public string SqlId { get; set; }
@@ -47,7 +47,7 @@ namespace JwDev.Model.RequestModels
 		[DataMember]
 		public string ErrorMessage { get; set; }
 
-		public RequestData()
+		public WasRequest()
 		{
 			IsMaster = false;
 			PageNo = 0;

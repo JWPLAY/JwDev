@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Windows.Forms;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Resources;
 
@@ -13,7 +13,7 @@ namespace JwDev.Core.Utils
 		{
 			try
 			{
-				var dtDictionaries = RequestHelper.GetData<DataTable>("Auth", "GetDictionaries", "Dictionaries", null);
+				var dtDictionaries = WasHelper.GetData<DataTable>("Auth", "GetDictionaries", "Dictionaries", null);
 				if (dtDictionaries != null && (dtDictionaries as DataTable).Rows.Count > 0)
 				{
 					foreach (DataRow dr in (dtDictionaries as DataTable).Rows)
@@ -22,7 +22,7 @@ namespace JwDev.Core.Utils
 					}
 				}
 
-				var dtMessages = RequestHelper.GetData<DataTable>("Auth", "GetMessages", "Messages", null);
+				var dtMessages = WasHelper.GetData<DataTable>("Auth", "GetMessages", "Messages", null);
 				if (dtMessages != null && (dtMessages as DataTable).Rows.Count > 0)
 				{
 					foreach (DataRow dr in (dtMessages as DataTable).Rows)

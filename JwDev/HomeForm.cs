@@ -5,9 +5,11 @@ using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
+using JwDev.Base.WasHandler;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Messages;
 using JwDev.Core.Utils;
+using JwDev.Model.Map;
 
 namespace JwDev
 {
@@ -96,7 +98,7 @@ namespace JwDev
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Sales", "GetSaleDashboard", new DataMap() { { "SALE_DATE", DateTime.Now.ToString("yyyyMMdd") } });
+				var res = WasHelper.GetData("Sales", "GetSaleDashboard", new DataMap() { { "SALE_DATE", DateTime.Now.ToString("yyyyMMdd") } });
 
 				if (res.Requests.Length > 0)
 				{

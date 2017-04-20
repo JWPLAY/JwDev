@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Model.Auth;
 using JwDev.Service.Mappers;
@@ -16,7 +16,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet CheckLoginUser(RequestDataSet req)
+		public static WasRequestSet CheckLoginUser(WasRequestSet req)
 		{
 			try
 			{
@@ -72,7 +72,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Logout(RequestDataSet req)
+		public static WasRequestSet Logout(WasRequestSet req)
 		{
 			try
 			{
@@ -100,7 +100,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetMainMenus(RequestDataSet req)
+		public static WasRequestSet GetMainMenus(WasRequestSet req)
 		{
 			try
 			{
@@ -122,7 +122,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetFormData(RequestDataSet req)
+		public static WasRequestSet GetFormData(WasRequestSet req)
 		{
 			try
 			{
@@ -149,7 +149,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet SaveBookmark(RequestDataSet req)
+		public static WasRequestSet SaveBookmark(WasRequestSet req)
 		{
 			try
 			{
@@ -174,7 +174,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetDictionaries(RequestDataSet req)
+		public static WasRequestSet GetDictionaries(WasRequestSet req)
 		{
 			try
 			{
@@ -190,7 +190,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetMessages(RequestDataSet req)
+		public static WasRequestSet GetMessages(WasRequestSet req)
 		{
 			try
 			{
@@ -212,7 +212,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetSettings(RequestDataSet req)
+		public static WasRequestSet GetSettings(WasRequestSet req)
 		{
 			try
 			{
@@ -234,7 +234,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetHelpContent(RequestDataSet req)
+		public static WasRequestSet GetHelpContent(WasRequestSet req)
 		{
 			try
 			{
@@ -260,7 +260,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetStyles(RequestDataSet req)
+		public static WasRequestSet GetStyles(WasRequestSet req)
 		{
 			try
 			{
@@ -276,7 +276,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet ClearPassword(RequestDataSet req)
+		public static WasRequestSet ClearPassword(WasRequestSet req)
 		{
 			try
 			{
@@ -296,7 +296,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet ChangePassword(RequestDataSet req)
+		public static WasRequestSet ChangePassword(WasRequestSet req)
 		{
 			try
 			{

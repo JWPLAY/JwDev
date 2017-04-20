@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using DevExpress.Data;
 using DevExpress.Utils;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -99,7 +99,7 @@ namespace JwDev.Core.Forms.Sales
 				p.SetValue("ST_SALE_DATE", datSaleDate.DateFrEdit.GetDateChar8());
 				p.SetValue("ED_SALE_DATE", datSaleDate.DateToEdit.GetDateChar8());
 
-				var res = RequestHelper.GetData("Sales", "GetSaleStat", p);
+				var res = WasHelper.GetData("Sales", "GetSaleStat", p);
 
 				if (res.Requests.Length == 0)
 					throw new Exception("조회 데이터가 없습니다.");

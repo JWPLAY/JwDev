@@ -8,9 +8,9 @@ using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -311,14 +311,14 @@ namespace JwDev.Core.Forms.Sales
 				if (itemData == null || itemData.Rows.Count == 0)
 					throw new Exception("품목을 입력해야 합니다.");
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Sales",
 					ProcessId = "Save",
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData() { Data = mastData },
-						new RequestData() { Data = itemData }
+						new WasRequest() { Data = mastData },
+						new WasRequest() { Data = itemData }
 					}
 				});
 				if (res.ErrorNumber != 0)
@@ -451,7 +451,7 @@ namespace JwDev.Core.Forms.Sales
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Sales", "GetSaleSumData", null);
+				var res = WasHelper.GetData("Sales", "GetSaleSumData", null);
 				if (res.Requests.Length > 0)
 				{
 					if (res.Requests[0].Data == null)
@@ -606,7 +606,7 @@ namespace JwDev.Core.Forms.Sales
 				{
 					if (txtInput.EditValue.ToStringNullToEmpty().IsNullOrEmpty() == false)
 					{
-						var res = RequestHelper.GetData<DataMap>("Product", "GetDataByBarcode", new DataMap() { { "BARCODE", txtInput.EditValue } });
+						var res = WasHelper.GetData<DataMap>("Product", "GetDataByBarcode", new DataMap() { { "BARCODE", txtInput.EditValue } });
 						if (res == null)
 							throw new Exception("데이터가 정확하지 않습니다.");
 

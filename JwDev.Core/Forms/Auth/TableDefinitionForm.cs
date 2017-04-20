@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DataRequest;
 using JwDev.Base.Utils;
+using JwDev.Base.WasHandler;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
 using JwDev.Core.Models;
 using JwDev.Core.Utils;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
 using JwDev.Model.System;
+using JwDev.Model.WasModels;
 
 namespace JwDev.Core.Forms.Auth
 {
@@ -169,15 +169,15 @@ namespace JwDev.Core.Forms.Auth
 
 				DataTable dtColumns = GetColumnData();
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Database",
 					ProcessId = "Save",
 					IsTransaction = true,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData() { SqlId = "Tables", Data = data, IsMaster = true, KeyField = "ID" },
-						new RequestData() { SqlId = "Columns", Data = dtColumns }
+						new WasRequest() { SqlId = "Tables", Data = data, IsMaster = true, KeyField = "ID" },
+						new WasRequest() { SqlId = "Columns", Data = dtColumns }
 					}
 				});
 				if (res.ErrorNumber != 0)

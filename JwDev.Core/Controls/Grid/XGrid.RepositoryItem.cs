@@ -9,8 +9,8 @@ using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Utils;
 
 namespace JwDev.Core.Controls.Grid
@@ -247,7 +247,7 @@ namespace JwDev.Core.Controls.Grid
 		public void SetRepositoryItemLookUpEdit(string fieldName, string valueMember, string displayMember, string serviceId, string processId, string sqlId, DataMap parameters)
 		{
 			RepositoryItemLookUpEdit edit = GetRepositoryItemLookUpEdit(valueMember, displayMember);
-			edit.DataSource = RequestHelper.GetData(serviceId, processId, sqlId, parameters).Requests[0].Data;
+			edit.DataSource = WasHelper.GetData(serviceId, processId, sqlId, parameters).Requests[0].Data;
 			SetRepositoryItem(fieldName, edit);
 		}
 

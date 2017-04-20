@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DataRequest;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
 using JwDev.Base.Utils;
+using JwDev.Base.WasHandler;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -16,7 +12,7 @@ using JwDev.Core.Messages;
 using JwDev.Core.Models;
 using JwDev.Core.Utils;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 
 namespace JwDev.Core.Forms.Auth
 {
@@ -168,7 +164,7 @@ namespace JwDev.Core.Forms.Auth
 		{
 			try
 			{
-				DataMap res = (DataMap)RequestHelper.GetData("Base", "GetData", "SelectCalendar", new DataMap() { { "CAL_DATE", id } }).Requests[0].Data;
+				DataMap res = (DataMap)WasHelper.GetData("Base", "GetData", "SelectCalendar", new DataMap() { { "CAL_DATE", id } }).Requests[0].Data;
 				if (res == null)
 					throw new Exception("조회할 데이터가 없습니다.");
 
@@ -205,14 +201,14 @@ namespace JwDev.Core.Forms.Auth
 					{ "ROWSTATE", "UPDATE" }
 				};
 				
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Base",
 					ProcessId = "Save",
 					IsTransaction = true,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = "Calendar",
 							KeyField = "CAL_DATE",
@@ -243,14 +239,14 @@ namespace JwDev.Core.Forms.Auth
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Base",
 					ProcessId = "Save",
 					IsTransaction = true,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = "Calendar",
 							KeyField = "CAL_DATE",
@@ -278,7 +274,7 @@ namespace JwDev.Core.Forms.Auth
 
 			try
 			{
-				var res = RequestHelper.ProcedureCall("CreateCalendar", new DataMap() { { "CAL_YEAR", datCalYear.GetDateChar4().ToIntegerNullToZero() } });
+				var res = WasHelper.ProcedureCall("CreateCalendar", new DataMap() { { "CAL_YEAR", datCalYear.GetDateChar4().ToIntegerNullToZero() } });
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -158,7 +158,7 @@ namespace JwDev.Core.Forms.Credit
 		{
 			try
 			{
-				var data = RequestHelper.GetData<DataMap>("Base", "GetData", "GetDepositData", new DataMap() { { "DEPOSIT_ID", id } });
+				var data = WasHelper.GetData<DataMap>("Base", "GetData", "GetDepositData", new DataMap() { { "DEPOSIT_ID", id } });
 
 				txtDepositId.EditValue = data.GetValue("DEPOSIT_ID");
 				datDepositDate.SetDateChar8(data.GetValue("DEPOSIT_DATE"));
@@ -190,7 +190,7 @@ namespace JwDev.Core.Forms.Credit
 				DataMap map = lcGroupEdit.ItemToDataMap();
 				map.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute("Base", "Save", "Deposit", map, "DEPOSIT_ID");
+				var res = WasHelper.Execute("Base", "Save", "Deposit", map, "DEPOSIT_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -213,7 +213,7 @@ namespace JwDev.Core.Forms.Credit
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Deposit", map, null);
+				var res = WasHelper.Execute("Base", "Save", "Deposit", map, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

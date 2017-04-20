@@ -2,13 +2,13 @@
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 
 namespace JwDev.Base.WasHandler
 {
 	public static class WasHelper
 	{
-		public static RequestDataSet Execute(this RequestDataSet reqset)
+		public static WasRequestSet Execute(this WasRequestSet reqset)
 		{
 			try
 			{
@@ -20,11 +20,11 @@ namespace JwDev.Base.WasHandler
 				throw;
 			}
 		}
-		public static RequestDataSet Execute(string serviceId, string processId, object data, string keyField)
+		public static WasRequestSet Execute(string serviceId, string processId, object data, string keyField)
 		{
 			return Execute(serviceId, processId, null, data, keyField);
 		}
-		public static RequestDataSet Execute(string serviceId, string processId, string sqlId, object data, string keyField)
+		public static WasRequestSet Execute(string serviceId, string processId, string sqlId, object data, string keyField)
 		{
 			try
 			{
@@ -34,13 +34,13 @@ namespace JwDev.Base.WasHandler
 				if (string.IsNullOrEmpty(serviceId))
 					serviceId = "Base";
 
-				var res = (new RequestDataSet()
+				var res = (new WasRequestSet()
 				{
 					ServiceId = serviceId,
 					ProcessId = processId,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							IsMaster = true,
 							KeyField = keyField,
@@ -64,15 +64,15 @@ namespace JwDev.Base.WasHandler
 			}
 		}
 
-		public static RequestDataSet GetData(string serviceId, DataMap parameter)
+		public static WasRequestSet GetData(string serviceId, DataMap parameter)
 		{
 			return GetData(serviceId, null, null, parameter);
 		}
-		public static RequestDataSet GetData(string serviceId, string processId, DataMap parameter)
+		public static WasRequestSet GetData(string serviceId, string processId, DataMap parameter)
 		{
 			return GetData(serviceId, processId, null, parameter);
 		}
-		public static RequestDataSet GetData(string serviceId, string processId, string sqlId, DataMap parameter)
+		public static WasRequestSet GetData(string serviceId, string processId, string sqlId, DataMap parameter)
 		{
 			try
 			{
@@ -88,13 +88,13 @@ namespace JwDev.Base.WasHandler
 				if (parameter.ContainsKey("INS_USER") == false)
 					parameter.SetValue("INS_USER", GlobalVar.Settings.GetValue("USER_ID"));
 
-				var res = (new RequestDataSet()
+				var res = (new WasRequestSet()
 				{
 					ServiceId = serviceId,
 					ProcessId = processId,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = sqlId,
 							Parameter = parameter
@@ -152,13 +152,13 @@ namespace JwDev.Base.WasHandler
 				if (parameter.ContainsKey("INS_USER") == false)
 					parameter.SetValue("INS_USER", GlobalVar.Settings.GetValue("USER_ID"));
 
-				var res = (new RequestDataSet()
+				var res = (new WasRequestSet()
 				{
 					ServiceId = serviceId,
 					ProcessId = processId,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = sqlId,
 							Parameter = parameter
@@ -183,7 +183,7 @@ namespace JwDev.Base.WasHandler
 			}
 		}
 
-		public static RequestDataSet ProcedureCall(string sqlId, DataMap parameter)
+		public static WasRequestSet ProcedureCall(string sqlId, DataMap parameter)
 		{
 			try
 			{
@@ -193,14 +193,14 @@ namespace JwDev.Base.WasHandler
 				if (parameter.ContainsKey("INS_USER") == false)
 					parameter.SetValue("INS_USER", GlobalVar.Settings.GetValue("USER_ID"));
 
-				var res = (new RequestDataSet()
+				var res = (new WasRequestSet()
 				{
 					ServiceId = "Base",
 					ProcessId = "ProcedureCall",
 					IsTransaction = true,
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = sqlId,
 							Parameter = parameter,

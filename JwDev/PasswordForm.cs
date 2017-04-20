@@ -1,6 +1,6 @@
 ﻿using System;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Core.Base.Forms;
@@ -74,7 +74,7 @@ namespace JwDev
 
 			try
 			{
-				var ret = RequestHelper.Execute("Auth", "ChangePassword", null, new DataMap()
+				var ret = WasHelper.Execute("Auth", "ChangePassword", null, new DataMap()
 				{
 					{ "LOGIN_ID", GlobalVar.Settings.GetValue("LOGIN_ID") },
 					{ "LOGIN_PW", txtCurPwd.EditValue },

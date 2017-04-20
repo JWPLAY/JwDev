@@ -2,8 +2,8 @@
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -235,7 +235,7 @@ namespace JwDev.Core.Forms.Code
 		{
 			try
 			{
-				var data = RequestHelper.GetData<SalesPriceDataModel>("Product", "GetSalesPriceData", new DataMap()
+				var data = WasHelper.GetData<SalesPriceDataModel>("Product", "GetSalesPriceData", new DataMap()
 				{
 					{ "REG_ID", reg_id }
 				});
@@ -272,7 +272,7 @@ namespace JwDev.Core.Forms.Code
 				DataMap data = lcGroupEdit1.ItemToDataMap();
 				data.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute("Product", "SaveSalesPrice", data, "REG_ID");
+				var res = WasHelper.Execute("Product", "SaveSalesPrice", data, "REG_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -295,7 +295,7 @@ namespace JwDev.Core.Forms.Code
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Product", "SaveSalesPrice", data, null);
+				var res = WasHelper.Execute("Product", "SaveSalesPrice", data, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

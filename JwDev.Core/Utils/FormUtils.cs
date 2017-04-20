@@ -3,8 +3,8 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 
@@ -71,7 +71,7 @@ namespace JwDev.Core.Utils
 				string rtfValue;
 				string helpName;
 
-				DataMap data = (DataMap)RequestHelper.GetData("Auth", "GetHelpContent", null, new DataMap() { { "HELP_ID", helpId }, { "MENU_ID", menuId } }).Requests[0].Data;
+				DataMap data = (DataMap)WasHelper.GetData("Auth", "GetHelpContent", null, new DataMap() { { "HELP_ID", helpId }, { "MENU_ID", menuId } }).Requests[0].Data;
 				if (data != null)
 				{
 					helpId = data.GetValue("ID");

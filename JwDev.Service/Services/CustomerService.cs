@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Service.Mappers;
 
@@ -15,7 +15,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
@@ -23,11 +23,11 @@ namespace JwDev.Service.Services
 				var phonesData = DaoFactory.Instance.QueryForList<DataMap>("SelectCustomerPhones", req.Requests[0].Parameter);
 				var addressData = DaoFactory.Instance.QueryForList<DataMap>("SelectCustomerAddress", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = customerData },
-					new RequestData() { Data = phonesData },
-					new RequestData() { Data = addressData }
+					new WasRequest() { Data = customerData },
+					new WasRequest() { Data = phonesData },
+					new WasRequest() { Data = addressData }
 				};
 				
 				return req;
@@ -46,7 +46,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 
@@ -170,7 +170,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Delete(RequestDataSet req)
+		public static WasRequestSet Delete(WasRequestSet req)
 		{
 			try
 			{
@@ -189,7 +189,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet SaveCustomerAddress(RequestDataSet req)
+		public static WasRequestSet SaveCustomerAddress(WasRequestSet req)
 		{
 			bool isTran = false;
 

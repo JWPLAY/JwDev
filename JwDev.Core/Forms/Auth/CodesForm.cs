@@ -2,8 +2,8 @@
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -152,7 +152,7 @@ namespace JwDev.Core.Forms.Auth
 		{
 			try
 			{
-				var data = RequestHelper.GetData<DataMap>("Base", "GetData", "SelectCode", new DataMap() { { "CODE_ID", id } });
+				var data = WasHelper.GetData<DataMap>("Base", "GetData", "SelectCode", new DataMap() { { "CODE_ID", id } });
 
 				txtCodeId.EditValue = data.GetValue("CODE_ID");
 				lupParentCode.BindData("CODE_GROUP", null, "ROOT", true);
@@ -210,7 +210,7 @@ namespace JwDev.Core.Forms.Auth
 					{ "ROWSTATE", ( this.EditMode == EditModeEnum.New ) ? "INSERT" : "UPDATE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Code", data, "CODE_ID");
+				var res = WasHelper.Execute("Base", "Save", "Code", data, "CODE_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -233,7 +233,7 @@ namespace JwDev.Core.Forms.Auth
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Code", data, null);
+				var res = WasHelper.Execute("Base", "Save", "Code", data, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

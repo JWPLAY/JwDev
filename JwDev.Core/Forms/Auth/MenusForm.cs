@@ -1,8 +1,8 @@
 ﻿using System;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
 using JwDev.Core.Enumerations;
@@ -131,7 +131,7 @@ namespace JwDev.Core.Forms.Auth
 		{
 			try
 			{
-				DataMap data = (DataMap)(RequestHelper.GetData("Base", "GetData", "SelectMenu", new DataMap() { { "MENU_ID", id } }).Requests[0].Data);
+				DataMap data = (DataMap)(WasHelper.GetData("Base", "GetData", "SelectMenu", new DataMap() { { "MENU_ID", id } }).Requests[0].Data);
 				if (data == null)
 					throw new Exception("조회할 데이터가 없습니다.");
 
@@ -169,7 +169,7 @@ namespace JwDev.Core.Forms.Auth
 				DataMap map = lc.ItemToDataMap();
 				map.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute("Base", "Save", "Menu", map, "MENU_ID");
+				var res = WasHelper.Execute("Base", "Save", "Menu", map, "MENU_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -192,7 +192,7 @@ namespace JwDev.Core.Forms.Auth
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Menu", map, "MENU_ID");
+				var res = WasHelper.Execute("Base", "Save", "Menu", map, "MENU_ID");
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

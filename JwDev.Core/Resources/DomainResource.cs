@@ -1,4 +1,4 @@
-﻿using JwDev.Base.Map;
+﻿using JwDev.Model.Map;
 
 namespace JwDev.Core.Resources
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace JwDev.Model.RequestModels
+namespace JwDev.Model.WasModels
 {
 	[DataContract]
-	public class RequestDataSet : IDisposable
+	public class WasRequestSet : IDisposable
 	{
 		[DataMember]
 		public string ServiceId { get; set; }
@@ -19,7 +19,7 @@ namespace JwDev.Model.RequestModels
 		public bool IsTransaction { get; set; }
 
 		[DataMember]
-		public RequestData[] Requests { get; set; }
+		public WasRequest[] Requests { get; set; }
 
 		[DataMember]
 		public int UserId { get; set; }
@@ -36,7 +36,7 @@ namespace JwDev.Model.RequestModels
 		[DataMember]
 		public string ErrorMessage { get; set; }
 
-		public RequestDataSet()
+		public WasRequestSet()
 		{
 			IsTransaction = true;
 			Requests = null;
@@ -56,11 +56,11 @@ namespace JwDev.Model.RequestModels
 			{
 				if (Requests != null && Requests.Length > 0)
 				{
-					foreach (RequestData data in Requests)
+					foreach (WasRequest req in Requests)
 					{
-						if (data != null)
+						if (req != null)
 						{
-							data.Dispose();
+							req.Dispose();
 						}
 					}
 					Requests = null;

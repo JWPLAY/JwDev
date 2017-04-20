@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Model.Profit;
 using JwDev.Service.Mappers;
@@ -10,7 +10,7 @@ namespace JwDev.Service.Services
 {
 	public static class CostPriceService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{
@@ -26,7 +26,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 

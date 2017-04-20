@@ -9,9 +9,9 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -205,7 +205,7 @@ namespace JwDev.Core.Forms.Purchase
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Purchase", parameters);
+				var res = WasHelper.GetData("Purchase", parameters);
 
 				if (res.Requests[0].Data == null)
 					throw new Exception("조회 데이터가 없습니다.");
@@ -257,14 +257,14 @@ namespace JwDev.Core.Forms.Purchase
 				if (item == null || item.Rows.Count == 0)
 					throw new Exception("구매품목을 입력해야 합니다.");
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Purchase",
 					ProcessId = "Save",
-					Requests = new RequestData[] 
+					Requests = new WasRequest[] 
 					{
-						new RequestData() { Data = mst },
-						new RequestData() { Data = item }
+						new WasRequest() { Data = mst },
+						new WasRequest() { Data = item }
 					}
 				});
 				if (res.ErrorNumber != 0)
@@ -289,7 +289,7 @@ namespace JwDev.Core.Forms.Purchase
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Purchase", "Delete", map, null);
+				var res = WasHelper.Execute("Purchase", "Delete", map, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using JwDev.Base.Constants;
-using JwDev.Base.DBTran.Controller;
 using JwDev.Base.Logging;
-using JwDev.Base.Map;
 using JwDev.Base.Utils;
 using JwDev.Base.Variables;
+using JwDev.Base.WasHandler;
 using JwDev.Core.Messages;
 using JwDev.Core.Utils;
+using JwDev.Model.Map;
 
 namespace JwDev.Core.Variables
 {
@@ -56,7 +55,7 @@ namespace JwDev.Core.Variables
 
 				try
 				{
-					DataTable data = (DataTable)RequestHelper.GetData("Auth", "GetSettings", "Setting", new DataMap()).Requests[0].Data;
+					DataTable data = (DataTable)WasHelper.GetData("Auth", "GetSettings", "Setting", new DataMap()).Requests[0].Data;
 					if (data != null && data.Rows.Count > 0)
 					{
 						foreach (DataRow row in data.Rows)

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
-using JwDev.Base.DBTran.Model;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 
 namespace JwDev.Service.Services
 {
 	public static class CodeHelpService
 	{
-		public static RequestDataSet GetCodeHelpLookup(RequestDataSet reqset)
+		public static WasRequestSet GetCodeHelpLookup(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 정확하지 않습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					IList<DataMap> list;
 					var parentCode = req.Parameter.GetValue("PARENT_CODE").ToStringNullToEmpty().ToCamelCase();

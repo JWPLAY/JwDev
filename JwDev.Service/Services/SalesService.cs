@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using JwDev.Base.Utils;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
 using JwDev.Model.Sales;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 using JwDev.Service.Utils;
 
@@ -12,7 +12,7 @@ namespace JwDev.Service.Services
 {
 	public static class SalesService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{
@@ -28,17 +28,17 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
 				var saletran = DaoFactory.Instance.QueryForObject<SaleTranDataModel>("GetSaleTran", req.Requests[0].Parameter);
 				var saleitem = DaoFactory.Instance.QueryForList<SaleTranItemDataModel>("GetSaleTranItem", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = saletran },
-					new RequestData() { Data = saleitem }
+					new WasRequest() { Data = saletran },
+					new WasRequest() { Data = saleitem }
 				};
 				return req;
 			}
@@ -50,7 +50,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 
@@ -197,7 +197,7 @@ namespace JwDev.Service.Services
 				return req;
 			}
 		}
-		public static RequestDataSet Delete(RequestDataSet req)
+		public static WasRequestSet Delete(WasRequestSet req)
 		{
 			try
 			{
@@ -226,7 +226,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetCategory(RequestDataSet req)
+		public static WasRequestSet GetCategory(WasRequestSet req)
 		{
 			try
 			{
@@ -241,7 +241,7 @@ namespace JwDev.Service.Services
 				return req;
 			}
 		}
-		public static RequestDataSet GetProducts(RequestDataSet req)
+		public static WasRequestSet GetProducts(WasRequestSet req)
 		{
 			try
 			{
@@ -257,7 +257,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetSaleSumData(RequestDataSet req)
+		public static WasRequestSet GetSaleSumData(WasRequestSet req)
 		{
 			try
 			{
@@ -273,7 +273,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetSaleStat(RequestDataSet req)
+		public static WasRequestSet GetSaleStat(WasRequestSet req)
 		{
 			try
 			{
@@ -282,12 +282,12 @@ namespace JwDev.Service.Services
 				var data3 = DaoFactory.Instance.QueryForList<DataMap>("GetSaleCategoryList", req.Requests[0].Parameter);
 				var data4 = DaoFactory.Instance.QueryForList<DataMap>("GetSalePayTypeList", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = data1 },
-					new RequestData() { Data = data2 },
-					new RequestData() { Data = data3 },
-					new RequestData() { Data = data4 }
+					new WasRequest() { Data = data1 },
+					new WasRequest() { Data = data2 },
+					new WasRequest() { Data = data3 },
+					new WasRequest() { Data = data4 }
 				};
 				return req;
 			}
@@ -299,17 +299,17 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetSaleDashboard(RequestDataSet req)
+		public static WasRequestSet GetSaleDashboard(WasRequestSet req)
 		{
 			try
 			{
 				var data1 = DaoFactory.Instance.QueryForList<DataMap>("GetSaleDaily", req.Requests[0].Parameter);
 				var data2 = DaoFactory.Instance.QueryForList<DataMap>("GetSaleMonthly", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = data1 },
-					new RequestData() { Data = data2 }
+					new WasRequest() { Data = data1 },
+					new WasRequest() { Data = data2 }
 				};
 				return req;
 			}

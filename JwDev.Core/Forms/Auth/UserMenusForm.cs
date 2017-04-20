@@ -2,8 +2,8 @@
 using System.Data;
 using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 using JwDev.Base.Variables;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -149,7 +149,7 @@ namespace JwDev.Core.Forms.Auth
 					return;
 				}
 
-				var res = RequestHelper.Execute("Base", "Save", "UserMenus", dt, null);
+				var res = WasHelper.Execute("Base", "Save", "UserMenus", dt, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 

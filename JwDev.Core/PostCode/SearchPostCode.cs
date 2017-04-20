@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using JwDev.Base.Map;
+using JwDev.Model.Map;
 
 namespace JwDev.Core.PostCode
 {

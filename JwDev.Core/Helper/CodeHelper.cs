@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Windows.Forms;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.Map;
 
 namespace JwDev.Core.Helper
 {
@@ -16,7 +16,7 @@ namespace JwDev.Core.Helper
 					parameters = new DataMap();
 				}
 				parameters.SetValue("PARENT_CODE", parentCodeId);
-				return RequestHelper.GetData<DataTable>("CodeHelp", "GetCodeHelpLookup", parameters);
+				return WasHelper.GetData<DataTable>("CodeHelp", "GetCodeHelpLookup", parameters);
 			}
 			catch
 			{
@@ -32,7 +32,7 @@ namespace JwDev.Core.Helper
 					parameters = new DataMap();
 				}
 				parameters.SetValue("PARENT_CODE", parentCodeId);
-				return RequestHelper.GetData<DataTable>("CodeHelp", "GetCodeHelpLookup", parameters);
+				return WasHelper.GetData<DataTable>("CodeHelp", "GetCodeHelpLookup", parameters);
 			}
 			catch
 			{

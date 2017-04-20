@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Service.Mappers;
 
@@ -16,14 +16,14 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetList(RequestDataSet reqset)
+		public static WasRequestSet GetList(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					req.Parameter.SetValue("INS_USER", reqset.UserId);
 					var list = DaoFactory.Instance.QueryForList<DataMap>(req.SqlId, req.Parameter);
@@ -45,14 +45,14 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet GetData(RequestDataSet reqset)
+		public static WasRequestSet GetData(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					req.Parameter.SetValue("INS_USER", reqset.UserId);
 					req.Data = DaoFactory.Instance.QueryForObject<DataMap>(req.SqlId, req.Parameter);
@@ -73,7 +73,7 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 			string keyField = string.Empty;
@@ -90,7 +90,7 @@ namespace JwDev.Service.Services
 
 				try
 				{
-					foreach (RequestData data in req.Requests)
+					foreach (WasRequest data in req.Requests)
 					{
 						if (data.Data == null)
 							continue;
@@ -186,14 +186,14 @@ namespace JwDev.Service.Services
 		/// </summary>
 		/// <param name="req">WasRequest</param>
 		/// <returns>WasRequest</returns>
-		public static RequestDataSet Delete(RequestDataSet reqset)
+		public static WasRequestSet Delete(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					DataMap parameter = null;
 					if (req.Data == null)
@@ -222,14 +222,14 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet ProcedureCall(RequestDataSet reqset)
+		public static WasRequestSet ProcedureCall(WasRequestSet reqset)
 		{
 			try
 			{
 				if (reqset.Requests == null || reqset.Requests.Length == 0)
 					throw new Exception("처리요청이 없습니다.");
 
-				foreach (RequestData req in reqset.Requests)
+				foreach (WasRequest req in reqset.Requests)
 				{
 					if (req.Parameter == null)
 						req.Parameter = new DataMap();

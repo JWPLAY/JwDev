@@ -4,7 +4,7 @@ using System.Data;
 using JwDev.Base.Utils;
 using JwDev.Model.Codes;
 using JwDev.Model.Map;
-using JwDev.Model.RequestModels;
+using JwDev.Model.WasModels;
 using JwDev.Service.Mappers;
 using JwDev.Service.Utils;
 
@@ -12,7 +12,7 @@ namespace JwDev.Service.Services
 {
 	public static class ProductService
 	{
-		public static RequestDataSet GetList(RequestDataSet req)
+		public static WasRequestSet GetList(WasRequestSet req)
 		{
 			try
 			{
@@ -28,17 +28,17 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetData(RequestDataSet req)
+		public static WasRequestSet GetData(WasRequestSet req)
 		{
 			try
 			{
 				var product = DaoFactory.Instance.QueryForObject<ProductDataModel>("SelectProduct", req.Requests[0].Parameter);
 				var materials = DaoFactory.Instance.QueryForList<DataMap>("SelectProductMaterials", req.Requests[0].Parameter);
 
-				req.Requests = new RequestData[]
+				req.Requests = new WasRequest[]
 				{
-					new RequestData() { Data = product },
-					new RequestData() { Data = materials }
+					new WasRequest() { Data = product },
+					new WasRequest() { Data = materials }
 				};
 				return req;
 			}
@@ -50,7 +50,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Save(RequestDataSet req)
+		public static WasRequestSet Save(WasRequestSet req)
 		{
 			bool isTran = false;
 
@@ -157,7 +157,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet Delete(RequestDataSet req)
+		public static WasRequestSet Delete(WasRequestSet req)
 		{
 			try
 			{
@@ -176,7 +176,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetSalesPriceList(RequestDataSet req)
+		public static WasRequestSet GetSalesPriceList(WasRequestSet req)
 		{
 			try
 			{
@@ -192,7 +192,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetSalesPriceData(RequestDataSet req)
+		public static WasRequestSet GetSalesPriceData(WasRequestSet req)
 		{
 			try
 			{
@@ -208,7 +208,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet SaveSalesPrice(RequestDataSet req)
+		public static WasRequestSet SaveSalesPrice(WasRequestSet req)
 		{
 			bool isTran = false;
 
@@ -279,7 +279,7 @@ namespace JwDev.Service.Services
 			}
 		}
 
-		public static RequestDataSet GetDataByBarcode(RequestDataSet req)
+		public static WasRequestSet GetDataByBarcode(WasRequestSet req)
 		{
 			try
 			{

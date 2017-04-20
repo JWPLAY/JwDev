@@ -7,10 +7,10 @@ using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using JwDev.Base.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Helper;
 using JwDev.Core.Utils;
+using JwDev.Model.Map;
 
 namespace JwDev.Core.Controls.Common
 {

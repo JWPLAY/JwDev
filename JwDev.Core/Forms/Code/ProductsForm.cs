@@ -7,9 +7,9 @@ using DevExpress.Utils;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
-using JwDev.Base.DBTran.Controller;
-using JwDev.Base.DBTran.Model;
-using JwDev.Base.Map;
+using JwDev.Base.WasHandler;
+using JwDev.Model.WasModels;
+using JwDev.Model.Map;
 using JwDev.Base.Utils;
 using JwDev.Core.Base.Forms;
 using JwDev.Core.Controls.Grid;
@@ -287,7 +287,7 @@ namespace JwDev.Core.Forms.Code
 		{
 			try
 			{
-				var res = RequestHelper.GetData("Product", new DataMap() { { "PRODUCT_ID", id } });
+				var res = WasHelper.GetData("Product", new DataMap() { { "PRODUCT_ID", id } });
 				if (res.Requests.Length > 0)
 				{
 					if (res.Requests[0].Data == null)
@@ -335,14 +335,14 @@ namespace JwDev.Core.Forms.Code
 				DataMap map = lcGroupEdit.ItemToDataMap();
 				map.SetValue("ROWSTATE", (this.EditMode == EditModeEnum.New) ? "INSERT" : "UPDATE");
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Product",
 					ProcessId = "Save",
-					Requests = new RequestData[]
+					Requests = new WasRequest[]
 					{
-						new RequestData() { Data = map },
-						new RequestData() { Data = GetMaterialData() }
+						new WasRequest() { Data = map },
+						new WasRequest() { Data = GetMaterialData() }
 					}
 				});
 				if (res.ErrorNumber != 0)
@@ -367,7 +367,7 @@ namespace JwDev.Core.Forms.Code
 					{ "ROWSTATE", "DELETE" }
 				};
 
-				var res = RequestHelper.Execute("Base", "Save", "Product", data, null);
+				var res = WasHelper.Execute("Base", "Save", "Product", data, null);
 				if (res.ErrorNumber != 0)
 					throw new Exception(res.ErrorMessage);
 
@@ -401,13 +401,13 @@ namespace JwDev.Core.Forms.Code
 				if (dt == null || dt.Rows.Count == 0)
 					throw new Exception("저장할 건이 없습니다.");
 
-				var res = RequestHelper.Execute(new RequestDataSet()
+				var res = WasHelper.Execute(new WasRequestSet()
 				{
 					ServiceId = "Base",
 					ProcessId = "Save",
-					Requests = new RequestData[] 
+					Requests = new WasRequest[] 
 					{
-						new RequestData()
+						new WasRequest()
 						{
 							SqlId = "ProductMaterial",
 							Data = dt
