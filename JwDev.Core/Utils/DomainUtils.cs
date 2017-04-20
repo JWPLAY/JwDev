@@ -1,8 +1,7 @@
 ﻿using System.Data;
 using System.Windows.Forms;
-using JwDev.Base.WasHandler;
-using JwDev.Model.Map;
 using JwDev.Base.Utils;
+using JwDev.Base.WasHandler;
 using JwDev.Core.Resources;
 
 namespace JwDev.Core.Utils

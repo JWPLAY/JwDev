@@ -266,7 +266,20 @@
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\JwDev.Base\JwDev.Base.csproj">
+      <Project>{c18da53b-5d3c-4ab0-a5f2-5ee399af54cc}</Project>
+      <Name>JwDev.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JwDev.Model\JwDev.Model.csproj">
+      <Project>{30f5ec55-1d6c-4ea3-89b0-f9cd6b60a17c}</Project>
+      <Name>JwDev.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JwDev.Service\JwDev.Service.csproj">
+      <Project>{ad8c33bf-9946-4a01-992c-72ab2d123487}</Project>
+      <Name>JwDev.Service</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />

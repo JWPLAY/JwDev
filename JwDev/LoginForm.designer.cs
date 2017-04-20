@@ -129,7 +129,7 @@
 			this.lc.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.lc.Location = new System.Drawing.Point(0, 0);
 			this.lc.Name = "lc";
-			this.lc.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1399, 203, 250, 350);
+			this.lc.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(841, 120, 689, 350);
 			this.lc.Root = this.lcGroupBase;
 			this.lc.Size = new System.Drawing.Size(490, 443);
 			this.lc.TabIndex = 22;
@@ -273,8 +273,11 @@
 			// 
 			this.layoutControlItem5.Control = this.btnOk;
 			this.layoutControlItem5.Location = new System.Drawing.Point(117, 396);
+			this.layoutControlItem5.MaxSize = new System.Drawing.Size(0, 27);
+			this.layoutControlItem5.MinSize = new System.Drawing.Size(37, 27);
 			this.layoutControlItem5.Name = "layoutControlItem5";
 			this.layoutControlItem5.Size = new System.Drawing.Size(118, 27);
+			this.layoutControlItem5.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
 			this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem5.TextVisible = false;
 			// 
@@ -282,8 +285,11 @@
 			// 
 			this.layoutControlItem6.Control = this.btnCancel;
 			this.layoutControlItem6.Location = new System.Drawing.Point(235, 396);
+			this.layoutControlItem6.MaxSize = new System.Drawing.Size(0, 27);
+			this.layoutControlItem6.MinSize = new System.Drawing.Size(37, 27);
 			this.layoutControlItem6.Name = "layoutControlItem6";
 			this.layoutControlItem6.Size = new System.Drawing.Size(118, 27);
+			this.layoutControlItem6.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
 			this.layoutControlItem6.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem6.TextVisible = false;
 			// 

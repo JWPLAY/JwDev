@@ -32,11 +32,6 @@ namespace JwDev
 			UserLookAndFeel.Default.UseWindowsXPTheme = false;
 			AppearanceObject.DefaultFont = SystemFonts.DefaultFont;
 
-			//Logger.Debug("IIS Start!!");
-			//SplashUtils.ShowWait("IIS를 구동하는 중입니다... 잠시만...");
-			////IISExpress.Start("AubeWeb");
-			//WebSiteContoller.SiteInvoke(WebSiteContoller.SiteAction.Start);
-
 			Logger.Debug("Application Start!!");
 
 			try
@@ -102,10 +97,6 @@ namespace JwDev
 				Application.ExitThread();
 				Environment.Exit(0);
 			}
-
-			//Logger.Debug("IIS Stop!!");
-			//SplashUtils.ShowWait("IIS를 종료하는 중입니다... 잠시만...");
-			//WebSiteContoller.SiteInvoke(WebSiteContoller.SiteAction.Stop);
 
 			Logger.Debug("Application Close!!");
 		}
