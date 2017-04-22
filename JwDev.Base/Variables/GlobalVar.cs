@@ -10,11 +10,11 @@ namespace JwDev.Base.Variables
 		}
 
 		public static string Version { get; set; }
-
+		public static string ServerMode { get; set; }
 		public static string ServerUrl { get; set; }
-
 		public static string DatabaseId { get; set; }
-
+		public static int CompanyId { get; set; }
+		public static int UserId { get; set; }
 		public static DataMap Settings { get; set; }
 	}
 }

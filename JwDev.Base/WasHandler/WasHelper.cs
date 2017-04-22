@@ -1,5 +1,4 @@
 ﻿using System;
-using JwDev.Base.Utils;
 using JwDev.Base.Variables;
 using JwDev.Model.Map;
 using JwDev.Model.WasModels;
@@ -12,8 +11,13 @@ namespace JwDev.Base.WasHandler
 		{
 			try
 			{
-				reqset.UserId = GlobalVar.Settings.GetValue("USER_ID").ToIntegerNullToZero();
-				return (new WasController()).Execute(reqset);
+				reqset.CompanyId = GlobalVar.CompanyId;
+				reqset.UserId = GlobalVar.UserId;
+
+				if (GlobalVar.ServerMode == "LOCAL")
+					return (new WasController()).Execute(reqset);
+				else
+					return (new WasClient()).Execute(reqset);
 			}
 			catch
 			{
@@ -40,13 +44,13 @@ namespace JwDev.Base.WasHandler
 					ProcessId = processId,
 					Requests = new WasRequest[]
 					{
-						new WasRequest()
-						{
-							IsMaster = true,
-							KeyField = keyField,
-							SqlId = sqlId,
-							Data = data
-						}
+					new WasRequest()
+					{
+						IsMaster = true,
+						KeyField = keyField,
+						SqlId = sqlId,
+						Data = data
+					}
 					}
 				}).Execute();
 
@@ -203,8 +207,7 @@ namespace JwDev.Base.WasHandler
 						new WasRequest()
 						{
 							SqlId = sqlId,
-							Parameter = parameter,
-
+							Parameter = parameter
 						}
 					}
 				}).Execute();

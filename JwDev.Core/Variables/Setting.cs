@@ -25,6 +25,7 @@ namespace JwDev.Core.Variables
 
 				GlobalVar.DatabaseId = "REAL";
 				GlobalVar.ServerUrl = ServerConsts.REAL;
+				GlobalVar.ServerMode = ServerConsts.ServerMode;
 
 				GlobalVar.Settings.SetValue("IS_USESKIN", SkinConsts.IS_USESKIN);
 				GlobalVar.Settings.SetValue("MAIN_SKIN", SkinConsts.MAIN_SKIN);
