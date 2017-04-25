@@ -25,7 +25,7 @@ namespace JwDev.Base.WasHandler
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				client.DefaultRequestHeaders.ExpectContinue = false;
 				client.Timeout = TimeSpan.FromMinutes(60);
-				client.BaseAddress = new Uri(GlobalVar.ServerUrl);
+				client.BaseAddress = new Uri(GlobalVar.Server.WasURL);
 				return client;
 			}
 			catch

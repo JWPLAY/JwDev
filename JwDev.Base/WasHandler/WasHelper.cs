@@ -14,7 +14,7 @@ namespace JwDev.Base.WasHandler
 				reqset.CompanyId = GlobalVar.CompanyId;
 				reqset.UserId = GlobalVar.UserId;
 
-				if (GlobalVar.ServerMode == "LOCAL")
+				if (GlobalVar.Server.WasMode == "LOCAL")
 					return (new WasController()).Execute(reqset);
 				else
 					return (new WasClient()).Execute(reqset);
